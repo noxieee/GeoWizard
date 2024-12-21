@@ -147,7 +147,7 @@
                             <h3 class="m-0 p-0">Hints</h3>
                             <h3 id="quiz-hints-count" class="m-0 p-0"></h3>
                         </div>
-                        <button id="hintBtn" type="button" class="btn btn-secondary">Get a hint</button>
+                        <button id="hintBtn" type="button" class="btn btn-warning">Get a hint</button>
                     </div>
 
                     <ul id="hints" class="list-group">
@@ -159,25 +159,18 @@
             <div id="quiz-answers" class="container bg-white p-4 pt-3 rounded-4 shadow-sm d-flex flex-column">
                 <h3 class="m-0">Possible answers</h3>
 
-                <div class="mt-3 d-flex flex-row flex-wrap gap-2">
-                    <button type="button" class="btn btn-outline-primary">Burkina Faso</button>
-                    <button type="button" class="btn btn-outline-primary">United States</button>
-                    <button type="button" class="btn btn-outline-primary">Albania</button>
-                    <button type="button" class="btn btn-outline-primary">Heard Island and McDonald Islands</button>
-                    <button type="button" class="btn btn-outline-primary">Lebanon</button>
-                    <button type="button" class="btn btn-outline-primary">Mauritania</button>
-                    <button type="button" class="btn btn-outline-primary">Martinique</button>
-                    <button type="button" class="btn btn-outline-primary">Christmas Island</button>
+                <div id="answerBtns" class="mt-3 d-flex flex-row flex-wrap gap-2">
+
                 </div>
 
                 <hr>
 
                 <div class="d-flex align-items-center" style="height: 58px;">
-                    <div class="d-none alert alert-success m-0" role="alert">
+                    <div id="quiz-correct-alert" class="d-none alert alert-success m-0" role="alert">
                         Correct! You earn 50 points.
                     </div>
 
-                    <div class="d-none alert alert-danger m-0 " role="alert">
+                    <div id="quiz-wrong-alert" class="d-none alert alert-danger m-0 " role="alert">
                         Incorrect.
                     </div>
 

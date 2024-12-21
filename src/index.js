@@ -28,7 +28,7 @@ class RestCountriesDataPreprocessor {
                 "region": c.region ? c.region : "No data.",
                 "population": c.population ? formatNumberWithSpaces(c.population) : "No data.",
                 "landlocked": c.landlocked ? "Yes" : "No",
-                "area": c.area ? formatNumberWithSpaces(c.population) + " km²" : "No data.",
+                "area": c.area ? formatNumberWithSpaces(c.area) + " km²" : "No data.",
                 "gini": Object.keys(c.gini).length ? c.gini[Object.keys(c.gini)] + " (" + Object.keys(c.gini)[0] + ")" : "No data.",
                 "unMember": c.unMember ? "Yes" : "No",
                 "drivingSide": c.car.side ? c.car.side.charAt(0).toUpperCase() + c.car.side.slice(1) : "No data.",
@@ -207,6 +207,17 @@ class Quiz {
         return this.questions[this.currentQuestionIdx].getShuffeledAnswerIdxs();
     }
 
+    /** Returns current questions points **/
+    getCurrentQuestionPoints() {
+        return this.questions[this.currentQuestionIdx].getPoints();
+    }
+
+    /** Returns correct answer index **/
+    getCurrentQuestionCorrectAnswerIdx() {
+        return this.questions[this.currentQuestionIdx].getCorrectAnswerIdx();
+    }
+
+    /** Returns count of hints used in question **/
     getCurrentQuestionHintCount() {
         return this.questions[this.currentQuestionIdx].getHintCount();
     }
@@ -223,7 +234,7 @@ class Quiz {
     }
 
     /** Check if the answers was correct - use only after Check answer! **/
-    isAnswerCorrect(answerIdx) {
+    isAnswerCorrect() {
         return this.questions[this.currentQuestionIdx].getWasCorrect();
     }
 
@@ -293,9 +304,9 @@ class QuizQuestion {
 
         this.additionalHints = {
             "Subregion": correctAnswerData.subregion,
-            "Car license plate signs": correctAnswerData.carPlate,
             "Borders": correctAnswerData.borders,
             "Capital(s)": correctAnswerData.capital,
+            "Car license plate signs": correctAnswerData.carPlate,
             "Flag": correctAnswerData.flag
         };
     }
@@ -321,6 +332,11 @@ class QuizQuestion {
     /** Return points obtained in the question **/
     getPoints() {
         return this.points;
+    }
+
+    /** Returns correct answer index **/
+    getCorrectAnswerIdx() {
+        return this.correctAnswerIdx;
     }
 
     /** Return if the question was correct **/
@@ -360,7 +376,7 @@ $(document).ready(function () {
     let quiz = null;
 
     /** Fetch the data and process it **/
-    $.get("../rest_countries.json", function(data) {
+    $.get("rest_countries.json", function(data) {
         dataPreprocessor.setInitialData(data);
         dataPreprocessor.processData();
     });
@@ -372,9 +388,6 @@ $(document).ready(function () {
     const quizSection = $("#quiz");
     const leaderboardSection = $("#leaderboards");
     const learnSection = $("#learn");
-
-    /** Play buttons on category cards selector **/
-    const cardPlayButtons = $("#categories .btn");
 
     /** Current selected menu item **/
     let currentMenuSelection = $('input[name="menu"]:checked').attr('id');
@@ -397,8 +410,21 @@ $(document).ready(function () {
         }
     });
 
+    /** Event listener for the next step button **/
+    $("#quiz-next-step-btn").click(function () {
+        $("html, body").animate({ scrollTop: 0 });
+
+        if(quiz.isLastQuestion()) {
+            // TODO
+            return;
+        }
+
+        quiz.updateCurrentQuestionIndex();
+        drawQuestion();
+    });
+
     /** Event listeners on the play buttons on category cards **/
-    cardPlayButtons.click(function () {
+    $("#categories .btn").click(function () {
         $("html, body").animate({ scrollTop: 0 });
         updateCategory($(this).attr('id'));
         quiz = new Quiz(dataPreprocessor.getProcessedDataByCategory(currentQuizCategory));
@@ -408,12 +434,26 @@ $(document).ready(function () {
 
     /** Draw the question of the quiz **/
     function drawQuestion() {
+        if(quiz.isLastQuestion()) {
+            $("#quiz-next-step-btn").text("Finish quiz");
+        }
+
+        $("#hintBtn").removeClass("disabled");
+        $("#quiz-next-step-btn").addClass("disabled");
+        $("#quiz-correct-alert").addClass("d-none");
+        $("#quiz-wrong-alert").addClass("d-none");
+
+        $("#initial-clues").empty();
+        $("#hints").empty();
+        $("#answerBtns").empty();
+
         updateHintsUsed();
         updateOverallScore();
         updateCountryNo();
         updateProggressbar();
         updateInitialClues();
         updateHintsUsed();
+        updateAnswers();
     }
 
     /** Add additional hint **/
@@ -444,6 +484,49 @@ $(document).ready(function () {
 
         $("#hints").append(liElement);
         updateHintsUsed();
+    }
+
+    /** Update answers **/
+    function updateAnswers() {
+        let answerIdxs = quiz.getCurrentQuestionAnswersIdxs();
+
+        for(let idx of answerIdxs) {
+            let countryName = quiz.data[idx].nameCommon;
+
+            let btnElement = `
+                <button id=${idx} type="button" class="btn btn-outline-primary">${countryName}</button>
+            `;
+
+            $("#answerBtns").append(btnElement);
+        }
+
+        /** Answer button event listener **/
+        $("#answerBtns button").click(answerBtnClickHandler);
+    }
+
+    /** Answer button click handler **/
+    function answerBtnClickHandler() {
+        $(this).parent().children().addClass("disabled");
+        $("#hintBtn").addClass("disabled");
+        $("#quiz-next-step-btn").removeClass("disabled");
+
+        let clickedId = Number($(this).attr('id'));
+
+        quiz.checkAnswer(clickedId);
+        let isCorrect = quiz.isAnswerCorrect(clickedId);
+
+        if(isCorrect) {
+            let points = quiz.getCurrentQuestionPoints();
+            $("#quiz-correct-alert").text("Correct! You earn " + points + " points.").removeClass("d-none");
+            $(this).addClass("btn-success").removeClass("btn-outline-primary").prepend("✔ ");
+        }
+        else {
+            $("#quiz-wrong-alert").removeClass("d-none");
+            $(this).addClass("btn-danger").removeClass("btn-outline-primary").prepend("🗙 ");
+            $(`#${quiz.getCurrentQuestionCorrectAnswerIdx()}`).addClass("btn-success").removeClass("btn-outline-primary");
+        }
+
+        $("#quiz-overall-score").text(quiz.getOverallScore());
     }
 
     /** Update initial clues **/
