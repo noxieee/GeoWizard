@@ -10,7 +10,7 @@
 
 <body class="d-flex justify-content-center p-4 page-bg">
     <div class="container bg-light bg-opacity-75 p-4 rounded-5 d-flex flex-column gap-4">
-        <div class="container bg-white p-4 rounded-4 d-flex flex-row gap-4 shadow-sm">
+        <div id="intro" class="container bg-white p-4 rounded-4 d-flex flex-row gap-4 shadow-sm">
             <img src="assets/logo.webp" alt="GeoWizard Logo" class="rounded-3 shadow-sm" style="width: 128px; height: 128px;">
             <div class="container p-0">
                 <h1>GeoWizard</h1>
@@ -19,21 +19,21 @@
             </div>
         </div>
 
-        <div class="container d-flex align-items-center gap-4 bg-white p-4 rounded-4 shadow-sm">
+        <div id="menu" class="container d-flex align-items-center gap-4 bg-white p-4 rounded-4 shadow-sm">
             <h3 class="m-0">Menu</h3>
             <div class="btn-group align-self-start shadow-sm" role="group" aria-label="Basic radio toggle button group">
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                <label class="btn btn-outline-primary" for="btnradio1">Country quiz</label>
+                <input type="radio" class="btn-check" name="menu" id="quiz-radio" autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="quiz-radio">Country quiz</label>
 
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio2">Leaderboards</label>
+                <input type="radio" class="btn-check" name="menu" id="leaderboard-radio" autocomplete="off">
+                <label class="btn btn-outline-primary" for="leaderboard-radio">Leaderboards</label>
 
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                <label class="btn btn-outline-primary" for="btnradio3">Learn about countries</label>
+                <input type="radio" class="btn-check" name="menu" id="learn-radio" autocomplete="off">
+                <label class="btn btn-outline-primary" for="learn-radio">Learn about countries</label>
             </div>
         </div>
 
-        <div class="container bg-white p-4 pt-3 rounded-4 d-flex flex-column gap-4 shadow-sm">
+        <div id="categories" class="container bg-white p-4 pt-3 rounded-4 d-flex flex-column gap-4 shadow-sm">
             <h2>Country quiz categories</h2>
             <div class="container d-flex flex-row gap-4 p-0">
                 <div class="card shadow-sm" style="width: 18rem;">
@@ -85,6 +85,383 @@
                         <a href="#" class="btn btn-primary w-100">Play</a>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div id="quiz" class="container d-flex gap-4 flex-column p-0 m-0">
+            <div class="container bg-white p-4 rounded-4 d-flex flex-row gap-4 shadow-sm">
+                <img src="assets/world.png" alt="" class="rounded-3 shadow-sm" style="width: 256px; height: auto; object-fit: cover;">
+
+                <div class="container d-flex flex-column gap-4 p-0">
+                    <div class="container d-flex flex-row p-0 m-0 align-items-center justify-content-between">
+                        <h2 class="m-0">Quiz - World</h2>
+                        <button type="button" class="btn btn-danger">End quiz</button>
+                    </div>
+
+                    <div class="container p-0 m-0">
+                        <h5 class="mb-2">Country 1/10</h5>
+
+                        <div class="progress" role="progressbar" aria-label="Example 20px high" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style="height: 16px">
+                            <div class="progress-bar" style="width: 10%"></div>
+                        </div>
+                    </div>
+
+                    <div class="container d-flex flex-row p-0 m-0 align-items-center gap-2">
+                        <h4 class="m-0">Current score:</h4>
+                        <h4 class="m-0 text-primary">0</h4>
+                    </div>
+
+                    <div class="container d-flex flex-row p-0 m-0 align-items-center gap-2">
+                        <h3 class="m-0">Final score:</h3>
+                        <h3 class="m-0 text-success">9950</h3>
+                    </div>
+
+                    <div class="container d-flex flex-row p-0 m-0 justify-content-between">
+                        <button type="button" class="btn btn-secondary btn-lg">Back to main menu</button>
+                        <button type="button" class="btn btn-primary btn-lg">Play again</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container d-flex flex-row gap-4 p-0 m-0">
+                <div class="container bg-white p-4 pt-3 rounded-4 d-flex flex-column shadow-sm gap-3">
+                    <div class="container d-flex flex-row p-0 m-0 align-items-center justify-content-between" style="height: 38px;">
+                        <h3 class="m-0">Initial clues</h3>
+                    </div>
+
+                    <ul id="initial-clues" class="list-group">
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Region</h5>
+                                <p class="m-0 col">Europe</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Population</h5>
+                                <p class="m-0 col">10250234</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Landlocked</h5>
+                                <p class="m-0 col">Yes</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Area</h5>
+                                <p class="m-0 col">801590 km²</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Gini index</h5>
+                                <p class="m-0 col">54 (2014)</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">UN member</h5>
+                                <p class="m-0 col">Yes</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Driving side</h5>
+                                <p class="m-0 col">Right</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Phone prefix</h5>
+                                <p class="m-0 col">+431</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Currency symbol(s)</h5>
+                                <p class="m-0 col">czk</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="container bg-white p-4 pt-3 rounded-4 d-flex flex-column shadow-sm gap-3">
+                    <div class="container d-flex flex-row p-0 m-0 align-items-center justify-content-between">
+                        <h3 class="m-0">Hints (5/5)</h3>
+                        <button type="button" class="btn btn-secondary">Get a hint</button>
+                    </div>
+
+                    <ul id="hints" class="list-group">
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Subregion</h5>
+                                <p class="m-0 col">Eastern Europe</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Car license plate code</h5>
+                                <p class="m-0 col">SK</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Borders</h5>
+                                <p class="m-0 col">Malawi, South Africa, Eswatini, Tanzania, Zambia, Zimbabwe</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Capital(s)</h5>
+                                <p class="m-0 col">Maputo</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Flag</h5>
+                                <img class="border border-dark-subtle rounded-1" src="https://flagcdn.com/w320/mz.png" alt="" width="200">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="container bg-white p-4 pt-3 rounded-4 shadow-sm d-flex flex-column">
+                <h3 class="m-0">Possible answers</h3>
+
+                <div class="mt-3 d-flex flex-row flex-wrap gap-2">
+                    <button type="button" class="btn btn-danger disabled">Burkina Faso</button>
+                    <button type="button" class="btn btn-outline-primary disabled">United States</button>
+                    <button type="button" class="btn btn-outline-primary disabled">Albania</button>
+                    <button type="button" class="btn btn-outline-success disabled">Heard Island and McDonald Islands</button>
+                    <button type="button" class="btn btn-outline-primary disabled">Lebanon</button>
+                    <button type="button" class="btn btn-outline-primary disabled">Mauritania</button>
+                    <button type="button" class="btn btn-outline-primary disabled">Martinique</button>
+                    <button type="button" class="btn btn-outline-primary disabled">Christmas Island</button>
+                </div>
+
+                <hr>
+
+                <div class="d-flex align-items-center" style="height: 58px;">
+                    <div class="alert alert-success m-0" role="alert">
+                        Correct! You earn 50 points.
+                    </div>
+
+                    <div class="alert alert-danger m-0 " role="alert">
+                        Incorrect.
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-lg ms-auto" style="height: 58px;">Next country</button>
+                </div>
+            </div>
+
+            <div class="container bg-white p-4 rounded-4 d-flex flex-column shadow-sm gap-4">
+                <div class="alert alert-info m-0" role="alert">
+                    <h2>Congratulations! You are on the podium!</h2>
+                </div>
+
+                <div class="container d-flex flex-row p-0 m-0 gap-4">
+                    <div class="container d-flex flex-column gap-4 p-0 m-0">
+                        <div class="container p-0 m-0">
+                            <label for="name-input" class="form-label">Enter your name</label>
+                            <form class="row g-3 p-0 m-0">
+                                <div class="container p-0 m-0 d-flex flex-row gap-3">
+                                    <input type="text" class="form-control form-control-lg" id="name-input" placeholder="John Doe">
+                                    <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="container p-0 m-0">
+                            <h5 class="m-0">World leaderboard</h5>
+
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                    <tr>
+                                        <th scope="row">1</th>
+                                        <td>John</td>
+                                        <td>10000</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">2</th>
+                                        <td>Kate</td>
+                                        <td>9980</td>
+                                    </tr>
+                                    <tr class="table-success">
+                                        <th scope="row">3</th>
+                                        <td>Player 1</td>
+                                        <td>9950</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="container d-flex p-0 m-0 justify-content-center align-items-center">
+                        <img src="assets/celebrating-cat.gif" alt="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="container bg-white p-4 pt-3 rounded-4 d-flex flex-column shadow-sm gap-3">
+                <h3 class="m-0">Quiz summary</h3>
+
+                <table class="table">
+                    <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Question</th>
+                        <th scope="col">Guessed</th>
+                        <th scope="col">Correct</th>
+                        <th scope="col">Hints</th>
+                        <th scope="col">Points</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row" class="table-danger">1</th>
+                        <td>Czechia</td>
+                        <td>Slovakia</td>
+                        <td>3/5</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="table-success">2</th>
+                        <td>Poland</td>
+                        <td>Poland</td>
+                        <td>0/5</td>
+                        <td>100</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" class="table-success">3</th>
+                        <td>Denmark</td>
+                        <td>Denmark</td>
+                        <td>2/5</td>
+                        <td>80</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Total</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><b>180</b></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="leaderboards" class="container d-flex flex-column gap-4 bg-white p-4 pt-3 rounded-4 shadow-sm">
+            <h3 class="m-0">Leaderboards</h3>
+
+
+            <div class="accordion w-50" id="leaderboards-all-accordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#world" aria-expanded="false" aria-controls="world">
+                            World
+                        </button>
+                    </h2>
+                    <div id="world" class="accordion-collapse collapse" data-bs-parent="#leaderboards-all-accordion">
+                        <div class="accordion-body">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Score</th>
+                                </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                <tr>
+                                    <th class="table-warning" scope="row">1</th>
+                                    <td>John</td>
+                                    <td>10000</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-secondary" scope="row">2</th>
+                                    <td>Kate</td>
+                                    <td>9980</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-danger" scope="row">3</th>
+                                    <td>Player 1</td>
+                                    <td>9950</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#europe" aria-expanded="false" aria-controls="europe">
+                            Europe
+                        </button>
+                    </h2>
+                    <div id="europe" class="accordion-collapse collapse" data-bs-parent="#leaderboards-all-accordion">
+                        <div class="accordion-body">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Score</th>
+                                </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                <tr>
+                                    <th class="table-warning" scope="row">1</th>
+                                    <td>John</td>
+                                    <td>10000</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-secondary" scope="row">2</th>
+                                    <td>Kate</td>
+                                    <td>9980</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-danger" scope="row">3</th>
+                                    <td>Player 1</td>
+                                    <td>9950</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="learn" class="container d-flex align-items-center gap-4 bg-white p-4 rounded-4 shadow-sm">
+            <h3 class="m-0">Learn about countries</h3>
+            <div class="btn-group align-self-start shadow-sm" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="learn" id="learn-world-radio" autocomplete="off" checked>
+                <label class="btn btn-outline-secondary" for="learn-world-radio">All</label>
+
+                <input type="radio" class="btn-check" name="learn" id="learn-europe-radio" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="learn-europe-radio">Europe</label>
+
+                <input type="radio" class="btn-check" name="learn" id="learn-asia-radio" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="learn-asia-radio">Asia</label>
+
+                <input type="radio" class="btn-check" name="learn" id="learn-oceania-radio" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="learn-oceania-radio">Oceania</label>
+
+                <input type="radio" class="btn-check" name="learn" id="learn-africa-radio" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="learn-africa-radio">Africa</label>
+
+                <input type="radio" class="btn-check" name="learn" id="learn-americas-radio" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="learn-americas-radio">Americas</label>
             </div>
         </div>
     </div>
