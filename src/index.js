@@ -44,7 +44,6 @@ class RestCountriesDataPreprocessor {
 
             this.processedData.push(processedCountryData);
         }
-        console.log(this.processedData);
 
         /** Function which gets neighbor common names and returns them as a string **/
         function getCountryNeighbors(bordersCca3, data) {
@@ -173,7 +172,7 @@ class Quiz {
 
         for(let i = 0; i < constants.QUIZ_QUESTION_COUNT; i++) {
             this.questions.push(
-                new QuizQuestion(randomCorrectAnswersIdxs[i], randomWrongAnswers[i], data)
+                new QuizQuestion(randomCorrectAnswersIdxs[i], randomWrongAnswers[i], this.data)
             );
         }
     }
@@ -181,6 +180,11 @@ class Quiz {
     /** Return the overall score **/
     getOverallScore() {
         return this.score;
+    }
+
+    /** Get current question number **/
+    getCurrentQuestionNumber() {
+        return this.currentQuestionIdx + 1;
     }
 
     /** Update current question index **/
@@ -201,6 +205,10 @@ class Quiz {
     /** Returns indexes of all possible answers for question **/
     getCurrentQuestionAnswersIdxs() {
         return this.questions[this.currentQuestionIdx].getShuffeledAnswerIdxs();
+    }
+
+    getCurrentQuestionHintCount() {
+        return this.questions[this.currentQuestionIdx].getHintCount();
     }
 
     /** Check the answer and update the questions parameters and the overall score **/
@@ -288,7 +296,7 @@ class QuizQuestion {
             "Car license plate signs": correctAnswerData.carPlate,
             "Borders": correctAnswerData.borders,
             "Capital(s)": correctAnswerData.capital,
-            "FlagURL": correctAnswerData.flag
+            "Flag": correctAnswerData.flag
         };
     }
 
@@ -328,7 +336,6 @@ class QuizQuestion {
     /** Returns the next hint **/
     getHint() {
         if(this.hintsUsed >= constants.QUIZ_QUESTION_MAX_HINTS) {
-            console.log("No more hints...");
             return null;
         }
 
@@ -341,10 +348,16 @@ class QuizQuestion {
 
         return returnVal;
     }
+
+    /** Get hint count **/
+    getHintCount() {
+        return this.hintsUsed;
+    }
 }
 
 $(document).ready(function () {
     let dataPreprocessor = new RestCountriesDataPreprocessor();
+    let quiz = null;
 
     /** Fetch the data and process it **/
     $.get("../rest_countries.json", function(data) {
@@ -375,13 +388,101 @@ $(document).ready(function () {
         updateMainScreenContentByMenuSelection();
     });
 
+    /** Event listener for the hint button **/
+    $("#hintBtn").click(function () {
+        addAdditionalHint();
+
+        if(quiz.getCurrentQuestionHintCount() === constants.QUIZ_QUESTION_MAX_HINTS) {
+            $(this).addClass("disabled");
+        }
+    });
+
     /** Event listeners on the play buttons on category cards **/
     cardPlayButtons.click(function () {
         $("html, body").animate({ scrollTop: 0 });
         updateCategory($(this).attr('id'));
+        quiz = new Quiz(dataPreprocessor.getProcessedDataByCategory(currentQuizCategory));
+        drawQuestion();
         updateMainScreenOnPlayBtnClick();
-        // TODO - init quiz
     });
+
+    /** Draw the question of the quiz **/
+    function drawQuestion() {
+        updateHintsUsed();
+        updateOverallScore();
+        updateCountryNo();
+        updateProggressbar();
+        updateInitialClues();
+        updateHintsUsed();
+    }
+
+    /** Add additional hint **/
+    function addAdditionalHint() {
+        let additionalHint = quiz.getCurrentQuestionNextHint();
+        let liElement;
+
+        if(additionalHint[0] === "Flag") {
+            liElement = `
+                <li class="list-group-item">
+                    <div class="container d-flex flex-row p-0 m-0">
+                        <h5 class="m-0 col-5">${additionalHint[0]}</h5>
+                        <img class="border border-dark-subtle rounded-1" src=${additionalHint[1]} alt="" width="200">
+                    </div>
+                </li>
+            `;
+        }
+        else {
+            liElement = `
+                <li class="list-group-item">
+                    <div class="container d-flex flex-row p-0 m-0">
+                        <h5 class="m-0 col-5">${additionalHint[0]}</h5>
+                        <p class="m-0 col">${additionalHint[1]}</p>
+                    </div>
+                </li>
+            `;
+        }
+
+        $("#hints").append(liElement);
+        updateHintsUsed();
+    }
+
+    /** Update initial clues **/
+    function updateInitialClues() {
+        let initialClues = quiz.getCurrentQuestionStartHints();
+
+        for(let key of Object.keys(initialClues)) {
+            let liElement = `
+                <li class="list-group-item">
+                    <div class="container d-flex flex-row p-0 m-0">
+                        <h5 class="m-0 col-5">${key}</h5>
+                        <p class="m-0 col">${initialClues[key]}</p>
+                    </div>
+                </li>
+            `;
+
+            $("#initial-clues").append(liElement);
+        }
+    }
+
+    /** Update progressbar **/
+    function updateProggressbar() {
+        $("#quiz-progress .progress-bar").css("width", `${quiz.getCurrentQuestionNumber() / constants.QUIZ_QUESTION_COUNT * 100}%`);
+    }
+
+    /** Update hints used **/
+    function updateHintsUsed() {
+        $("#quiz-hints-count").text(quiz.getCurrentQuestionHintCount() + "/" + constants.QUIZ_QUESTION_MAX_HINTS);
+    }
+
+    /** Update quiz overall score **/
+    function updateOverallScore() {
+        $("#quiz-overall-score").text(quiz.getOverallScore());
+    }
+
+    /** Update country number (quiz question number) **/
+    function updateCountryNo() {
+        $("#quiz-country-no").text(quiz.getCurrentQuestionNumber() + "/" + constants.QUIZ_QUESTION_COUNT);
+    }
 
     /** Function to update the content depending on current Menu selection **/
     function updateMainScreenContentByMenuSelection() {
