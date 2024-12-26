@@ -1,6 +1,6 @@
 import * as constants from "./constants.js";
 
-/** Class to adapt the REST countries data into desireable format **/
+/** Class to adapt the REST countries data into desirable format **/
 class RestCountriesDataPreprocessor {
     constructor() {
         this.data = null;

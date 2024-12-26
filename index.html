@@ -9,6 +9,25 @@
 </head>
 
 <body class="d-flex justify-content-center p-4 page-bg">
+    <div class="modal fade" id="endQuizModal" tabindex="-1" aria-labelledby="endQuizModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="endQuizModalLabel">Are you sure you want to end the quiz?</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Your progress will not be saved.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="endQuizConfirmationBtn" class="btn btn-danger">End quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div class="container bg-light bg-opacity-75 p-4 rounded-5 d-flex flex-column gap-4">
         <div id="intro" class="container bg-white p-4 rounded-4 d-flex flex-row gap-4 shadow-sm">
             <img src="./assets/logo.webp" alt="GeoWizard Logo" class="rounded-3 shadow-sm" style="width: 128px; height: 128px;">
@@ -98,7 +117,7 @@
                             <h2 class="m-0 p-0">Quiz -</h2>
                             <h2 id="quiz-heading-category" class="m-0 p-0">Category</h2>
                         </div>
-                        <button id="end-quiz-btn" type="button" class="btn btn-danger">End quiz</button>
+                        <button id="end-quiz-btn" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#endQuizModal">End quiz</button>
                     </div>
 
                     <div id="quiz-progress" class="container p-0 m-0">
