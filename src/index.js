@@ -423,6 +423,11 @@ $(document).ready(function () {
         drawQuestion();
     });
 
+    /** Event listener for the end quiz confirmation modal button **/
+    $("#endQuizConfirmationBtn").click(function () {
+        resetQuiz();
+    });
+
     /** Event listeners on the play buttons on category cards **/
     $("#categories .btn").click(function () {
         $("html, body").animate({ scrollTop: 0 });
@@ -431,6 +436,16 @@ $(document).ready(function () {
         drawQuestion();
         updateMainScreenOnPlayBtnClick();
     });
+
+    function resetQuiz() {
+        quiz = null;
+        currentQuizCategory = null;
+
+        introSection.removeClass("d-none");
+        menuSection.removeClass("d-none");
+        categoriesSection.removeClass("d-none");
+        quizSection.addClass("d-none");
+    }
 
     /** Draw the question of the quiz **/
     function drawQuestion() {
