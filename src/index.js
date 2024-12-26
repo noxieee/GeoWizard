@@ -437,6 +437,7 @@ $(document).ready(function () {
         updateMainScreenOnPlayBtnClick();
     });
 
+    /** Function to reset the quiz and bring the user back to homepage **/
     function resetQuiz() {
         quiz = null;
         currentQuizCategory = null;
