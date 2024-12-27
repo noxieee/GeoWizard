@@ -445,6 +445,7 @@ $(document).ready(function () {
 
         if(quiz.isLastQuestion()) {
             updateScreenOnQuizSummary();
+            $(this).text("Next country");
             return;
         }
 
@@ -454,7 +455,11 @@ $(document).ready(function () {
 
     /** Event listener for the end quiz confirmation modal button **/
     $("#endQuizConfirmationBtn").click(function () {
-        // TODO
+        $("#quiz").addClass("d-none");
+
+        $("#menu").removeClass("d-none");
+        $("#intro").removeClass("d-none");
+        $("#categories").removeClass("d-none");
     });
 
     /** Event listener for the play again button **/
@@ -464,7 +469,19 @@ $(document).ready(function () {
 
     /** Event listener for the back to menu button **/
     $("#quiz-play-again-btn").click(function () {
-        // TODO
+        $("html, body").animate({ scrollTop: 0 });
+        quiz = new Quiz(dataPreprocessor.getProcessedDataByCategory(currentQuizCategory));
+
+        $("#quiz-summary").addClass("d-none");
+        $("#quiz-final-score").addClass("d-none");
+        $("#quiz-end-controls").addClass("d-none");
+
+        $("#quiz-progress").removeClass("d-none");
+        $("#quiz-initial-clues-and-hints").removeClass("d-none");
+        $("#quiz-current-score").removeClass("d-none");
+        $("#quiz-answers").removeClass("d-none");
+
+        drawQuestion();
     });
 
     /** Event listeners on the play buttons on category cards **/
@@ -485,7 +502,6 @@ $(document).ready(function () {
         $("#quiz-current-score").addClass("d-none");
 
         $("#quiz-final-score-label").text(quiz.getOverallScore());
-
         setSummaryItems();
 
         // TODO if highscore, show the highscore section and update localstorage
@@ -567,7 +583,7 @@ $(document).ready(function () {
                 <li class="list-group-item">
                     <div class="container d-flex flex-row p-0 m-0">
                         <h5 class="m-0 col-5">${additionalHint[0]}</h5>
-                        <img class="border border-dark-subtle rounded-1" src=${additionalHint[1]} alt="" width="200">
+                        <img class="border border-dark-subtle rounded-1" src=${additionalHint[1]} alt="" height="120">
                     </div>
                 </li>
             `;
