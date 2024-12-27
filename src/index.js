@@ -462,12 +462,26 @@ $(document).ready(function () {
         $("#categories").removeClass("d-none");
     });
 
-    /** Event listener for the play again button **/
+    /** Event listener for the back to menu button **/
     $("#quiz-back-to-menu-btn").click(function () {
-        // TODO
+        quiz = null;
+        currentQuizCategory = null;
+
+        $("#quiz-summary").addClass("d-none");
+        $("#quiz").addClass("d-none");
+        $("#quiz-final-score").addClass("d-none");
+        $("#quiz-end-controls").addClass("d-none");
+
+        $("#quiz-progress").removeClass("d-none");
+        $("#quiz-initial-clues-and-hints").removeClass("d-none");
+        $("#quiz-current-score").removeClass("d-none");
+        $("#quiz-answers").removeClass("d-none");
+        $("#menu").removeClass("d-none");
+        $("#intro").removeClass("d-none");
+        $("#categories").removeClass("d-none");
     });
 
-    /** Event listener for the back to menu button **/
+    /** Event listener for the play again button **/
     $("#quiz-play-again-btn").click(function () {
         $("html, body").animate({ scrollTop: 0 });
         quiz = new Quiz(dataPreprocessor.getProcessedDataByCategory(currentQuizCategory));
