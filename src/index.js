@@ -27,9 +27,8 @@ class RestCountriesDataPreprocessor {
                 "cca3": c.cca3 ? c.cca3 : "No data",
                 "region": c.region ? c.region : "No data.",
                 "population": c.population ? formatNumberWithSpaces(c.population) : "No data.",
-                "landlocked": c.landlocked ? "Yes" : "No",
+                "hasSea": c.landlocked ? "No" : "Yes",
                 "area": c.area ? formatNumberWithSpaces(c.area) + " km²" : "No data.",
-                "gini": Object.keys(c.gini).length ? c.gini[Object.keys(c.gini)] + " (" + Object.keys(c.gini)[0] + ")" : "No data.",
                 "unMember": c.unMember ? "Yes" : "No",
                 "drivingSide": c.car.side ? c.car.side.charAt(0).toUpperCase() + c.car.side.slice(1) : "No data.",
                 "phonePrefix": getPhonePrefixes(c),
@@ -280,6 +279,7 @@ class QuizQuestion {
         this.init(data);
     }
 
+    /** Init function **/
     init(data) {
         this.setHints(data);
         const toShuffle = this.wrongAnswersIdxs;
@@ -287,15 +287,15 @@ class QuizQuestion {
         this.allAnswersShuffeledIdxs = shuffleArray(toShuffle);
     }
 
+    /** Function which sets the hints for the question instance **/
     setHints(data) {
         const correctAnswerData = data[this.correctAnswerIdx];
 
         this.startHints = {
             "Region": correctAnswerData.region,
             "Population": correctAnswerData.population,
-            "Landlocked": correctAnswerData.landlocked,
+            "Sea access": correctAnswerData.hasSea,
             "Area": correctAnswerData.area,
-            "Gini index": correctAnswerData.gini,
             "UN member:": correctAnswerData.unMember,
             "Driving side": correctAnswerData.drivingSide,
             "Phone prefix": correctAnswerData.phonePrefix,
@@ -415,7 +415,7 @@ $(document).ready(function () {
         $("html, body").animate({ scrollTop: 0 });
 
         if(quiz.isLastQuestion()) {
-            // TODO
+            updateScreenOnQuizSummary();
             return;
         }
 
@@ -425,7 +425,7 @@ $(document).ready(function () {
 
     /** Event listener for the end quiz confirmation modal button **/
     $("#endQuizConfirmationBtn").click(function () {
-        resetQuiz();
+        // TODO
     });
 
     /** Event listeners on the play buttons on category cards **/
@@ -437,15 +437,17 @@ $(document).ready(function () {
         updateMainScreenOnPlayBtnClick();
     });
 
-    /** Function to reset the quiz and bring the user back to homepage **/
-    function resetQuiz() {
-        quiz = null;
-        currentQuizCategory = null;
+    /** Show the quiz summary **/
+    function updateScreenOnQuizSummary() {
+        $("#end-quiz-btn").addClass("d-none");
+        $("#quiz-initial-clues-and-hints").addClass("d-none");
+        $("#quiz-answers").addClass("d-none");
+        $("#quiz-progress").addClass("d-none");
+        $("#quiz-current-score").addClass("d-none");
 
-        introSection.removeClass("d-none");
-        menuSection.removeClass("d-none");
-        categoriesSection.removeClass("d-none");
-        quizSection.addClass("d-none");
+        $("#quiz-summary").removeClass("d-none");
+        $("#quiz-final-score").removeClass("d-none");
+        $("#quiz-end-controls").removeClass("d-none");
     }
 
     /** Draw the question of the quiz **/
