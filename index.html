@@ -138,12 +138,12 @@
 
                     <div id="quiz-final-score" class="d-none container d-flex flex-row p-0 m-0 align-items-center gap-2">
                         <h3 class="m-0">Final score:</h3>
-                        <h3 class="m-0 text-success">9950</h3>
+                        <h3 id="quiz-final-score-label" class="m-0 text-success">9950</h3>
                     </div>
 
                     <div id="quiz-end-controls" class="d-none container d-flex flex-row p-0 m-0 gap-3">
-                        <button type="button" class="btn btn-secondary btn-lg">Back to main menu</button>
-                        <button type="button" class="btn btn-primary btn-lg">Play again</button>
+                        <button id="quiz-back-to-menu-btn" type="button" class="btn btn-secondary btn-lg">Back to main menu</button>
+                        <button id="quiz-play-again-btn" type="button" class="btn btn-primary btn-lg">Play again</button>
                     </div>
                 </div>
             </div>
@@ -256,43 +256,43 @@
 
                 <table class="table">
                     <thead class="table-dark">
-                    <tr>
-                        <th scope="col">Question</th>
-                        <th scope="col">Guessed</th>
-                        <th scope="col">Correct</th>
-                        <th scope="col">Hints</th>
-                        <th scope="col">Points</th>
-                    </tr>
+                        <tr>
+                            <th scope="col">Question</th>
+                            <th scope="col">Guessed</th>
+                            <th scope="col">Correct</th>
+                            <th scope="col">Hints</th>
+                            <th scope="col">Points</th>
+                        </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row" class="table-danger">1</th>
-                        <td>Czechia</td>
-                        <td>Slovakia</td>
-                        <td>3/5</td>
-                        <td>0</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="table-success">2</th>
-                        <td>Poland</td>
-                        <td>Poland</td>
-                        <td>0/5</td>
-                        <td>100</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" class="table-success">3</th>
-                        <td>Denmark</td>
-                        <td>Denmark</td>
-                        <td>2/5</td>
-                        <td>80</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Total</th>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><b>180</b></td>
-                    </tr>
+                    <tbody id="quiz-summary-tbody">
+                        <tr>
+                            <th scope="row" class="table-danger">1</th>
+                            <td>Czechia</td>
+                            <td>Slovakia</td>
+                            <td>3/5</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="table-success">2</th>
+                            <td>Poland</td>
+                            <td>Poland</td>
+                            <td>0/5</td>
+                            <td>100</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="table-success">3</th>
+                            <td>Denmark</td>
+                            <td>Denmark</td>
+                            <td>2/5</td>
+                            <td>80</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><b>180</b></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

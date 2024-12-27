@@ -176,9 +176,19 @@ class Quiz {
         }
     }
 
+    /** Return the data used for the quiz **/
+    getQuizCountryData() {
+        return this.data;
+    }
+
     /** Return the overall score **/
     getOverallScore() {
         return this.score;
+    }
+
+    /** Return all the questions **/
+    getQuestions() {
+        return this.questions;
     }
 
     /** Get current question number **/
@@ -230,6 +240,8 @@ class Quiz {
             currentQuestion.computePoints();
             this.score += currentQuestion.getPoints();
         }
+
+        currentQuestion.setGuessedIdx(answerIdx);
     }
 
     /** Check if the answers was correct - use only after Check answer! **/
@@ -268,6 +280,7 @@ class Quiz {
 class QuizQuestion {
     constructor(correctAnswerIdx, wrongAnswersIdxs, data) {
         this.correctAnswerIdx = correctAnswerIdx;
+        this.guessIdx = null;
         this.wrongAnswersIdxs = wrongAnswersIdxs;
         this.startHints = null;
         this.additionalHints = null;
@@ -308,6 +321,22 @@ class QuizQuestion {
             "Capital(s)": correctAnswerData.capital,
             "Car license plate signs": correctAnswerData.carPlate,
             "Flag": correctAnswerData.flag
+        };
+    }
+
+    /** Set the guess idk the player made **/
+    setGuessedIdx(guessIdx) {
+        this.guessIdx = guessIdx;
+    }
+
+    /** Get the summary data **/
+    getSummaryData() {
+        return {
+            "wasCorrect": this.wasCorrect,
+            "guessedCountryIdx": this.guessIdx,
+            "correctCountryIdx": this.correctAnswerIdx,
+            "hintsUsed": this.hintsUsed,
+            "points": this.points
         };
     }
 
@@ -428,6 +457,16 @@ $(document).ready(function () {
         // TODO
     });
 
+    /** Event listener for the play again button **/
+    $("#quiz-back-to-menu-btn").click(function () {
+        // TODO
+    });
+
+    /** Event listener for the back to menu button **/
+    $("#quiz-play-again-btn").click(function () {
+        // TODO
+    });
+
     /** Event listeners on the play buttons on category cards **/
     $("#categories .btn").click(function () {
         $("html, body").animate({ scrollTop: 0 });
@@ -445,9 +484,53 @@ $(document).ready(function () {
         $("#quiz-progress").addClass("d-none");
         $("#quiz-current-score").addClass("d-none");
 
+        $("#quiz-final-score-label").text(quiz.getOverallScore());
+
+        setSummaryItems();
+
+        // TODO if highscore, show the highscore section and update localstorage
+
         $("#quiz-summary").removeClass("d-none");
         $("#quiz-final-score").removeClass("d-none");
         $("#quiz-end-controls").removeClass("d-none");
+    }
+
+    function setSummaryItems() {
+        $("#quiz-summary-tbody").empty();
+
+        const quizCountryData = quiz.getQuizCountryData();
+        const questions = quiz.getQuestions();
+        let i = 1;
+
+        for(let question of questions) {
+            let questionData = question.getSummaryData();
+
+            $("#quiz-summary-tbody").append(
+                `
+                <tr>
+                    <th scope="row" class="${questionData.wasCorrect ? 'table-success' : 'table-danger'}">${i}</th>
+                    <td>${quizCountryData[questionData.guessedCountryIdx].nameCommon}</td>
+                    <td>${quizCountryData[questionData.correctCountryIdx].nameCommon}</td>
+                    <td>${questionData.hintsUsed}</td>
+                    <td>${questionData.points}</td>
+                </tr>
+                `
+            );
+
+            i++;
+        }
+
+        $("#quiz-summary-tbody").append(
+            `
+            <tr>
+                <th scope="row">Total</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><b>${quiz.getOverallScore()}</b></td>
+            </tr>
+            `
+        );
     }
 
     /** Draw the question of the quiz **/
