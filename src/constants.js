@@ -6,7 +6,7 @@ export const QUIZ_QUESTION_MAX_POINTS = 100;
 export const QUIZ_QUESTION_HINT_PENALIZATION = 10;
 export const QUIZ_QUESTION_MAX_HINTS = 5;
 
-export const CATEGORY_BTN_ID_TO_KEY = {
+export const CATEGORY_ID_TO_KEY = {
     "category-world": "world",
     "category-europe": "europe",
     "category-asia": "asia",

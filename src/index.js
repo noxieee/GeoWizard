@@ -403,6 +403,29 @@ class QuizQuestion {
 $(document).ready(function () {
     let dataPreprocessor = new RestCountriesDataPreprocessor();
     let quiz = null;
+    let leaderboards = null;
+
+    /** Check if leaderboards are defined, if not, define the initial structure **/
+    if(localStorage.leaderboards) {
+        console.log(localStorage.leaderboards);
+        leaderboards = JSON.parse(localStorage.leaderboards);
+        // TODO refresh leaderboards
+        refreshLeaderboards();
+    }
+    else {
+        const leaderboards = {};
+
+        for(let category of Object.values(constants.CATEGORY_ID_TO_KEY)) {
+            leaderboards[category] = {
+                "1": {"score": "", "name": ""},
+                "2": {"score": "", "name": ""},
+                "3": {"score": "", "name": ""},
+                "unknownNamesCount": 0
+            };
+        }
+
+        localStorage.setItem("leaderboards", JSON.stringify(leaderboards));
+    }
 
     /** Fetch the data and process it **/
     $.get("rest_countries.json", function(data) {
@@ -587,6 +610,56 @@ $(document).ready(function () {
         updateAnswers();
     }
 
+    /** Function to refresh leaderboards on frontend **/
+    function refreshLeaderboards() {
+        $("#leaderboards-accordion").empty();
+
+        for(let category of Object.keys(leaderboards)) {
+            let accordionItem =
+            `
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target=${"#" + category}  aria-expanded="false" aria-controls=${category}>
+                            ${capitalizeFirstLetterOfString(category)}
+                        </button>
+                    </h2>
+                    <div id=${category} class="accordion-collapse collapse" data-bs-parent="#leaderboards-accordion">
+                        <div class="accordion-body">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Score</th>
+                                </tr>
+                                </thead>
+                                <tbody class="table-group-divider">
+                                <tr>
+                                    <th class="table-warning" scope="row">1</th>
+                                    <td>${leaderboards[category][1].name}</td>
+                                    <td>${leaderboards[category][1].score}</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-secondary" scope="row">2</th>
+                                    <td>${leaderboards[category][2].name}</td>
+                                    <td>${leaderboards[category][2].score}</td>
+                                </tr>
+                                <tr>
+                                    <th class="table-danger" scope="row">3</th>
+                                    <td>${leaderboards[category][3].name}</td>
+                                    <td>${leaderboards[category][3].score}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            $("#leaderboards-accordion").append(accordionItem);
+        }
+    }
+
     /** Add additional hint **/
     function addAdditionalHint() {
         let additionalHint = quiz.getCurrentQuestionNextHint();
@@ -731,8 +804,8 @@ $(document).ready(function () {
 
     /** Function to update the category when Play button is clicked and the heading category in quiz **/
     function updateCategory(categoryBtnId) {
-        currentQuizCategory = constants.CATEGORY_BTN_ID_TO_KEY[categoryBtnId];
-        $("#quiz-heading-category").text(currentQuizCategory.charAt(0).toUpperCase() + currentQuizCategory.slice(1));
+        currentQuizCategory = constants.CATEGORY_ID_TO_KEY[categoryBtnId];
+        $("#quiz-heading-category").text(capitalizeFirstLetterOfString(currentQuizCategory));
     }
 });
 
@@ -753,4 +826,8 @@ function shuffleArray(array) {
     }
 
     return arrayCpy;
+}
+
+function capitalizeFirstLetterOfString(stringToCapitalize) {
+    return stringToCapitalize.charAt(0).toUpperCase() + stringToCapitalize.slice(1);
 }
