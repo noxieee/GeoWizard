@@ -423,7 +423,6 @@ $(document).ready(function () {
 
     /** Parse the leaderboards and refresh the leaderboards on frontend **/
     leaderboards = JSON.parse(localStorage.leaderboards);
-    console.log(leaderboards);
     refreshLeaderboards();
 
     /** Fetch the data and process it **/
@@ -619,51 +618,71 @@ $(document).ready(function () {
 
     /** Function to refresh leaderboards on frontend **/
     function refreshLeaderboards() {
-        $("#leaderboards-accordion").empty();
+        // Clear existing tabs and tab content
+        $("#quizTab").empty();
+        $("#quizTabContent").empty();
 
-        for(let category of Object.keys(leaderboards)) {
-            let accordionItem =
-            `
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target=${"#" + category}  aria-expanded="false" aria-controls=${category}>
-                            ${capitalizeFirstLetterOfString(category)}
-                        </button>
-                    </h2>
-                    <div id=${category} class="accordion-collapse collapse" data-bs-parent="#leaderboards-accordion">
-                        <div class="accordion-body">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Score</th>
-                                </tr>
-                                </thead>
-                                <tbody class="table-group-divider">
-                                <tr>
-                                    <th class="table-warning" scope="row">1</th>
-                                    <td>${leaderboards[category][1].name}</td>
-                                    <td>${leaderboards[category][1].score}</td>
-                                </tr>
-                                <tr>
-                                    <th class="table-secondary" scope="row">2</th>
-                                    <td>${leaderboards[category][2].name}</td>
-                                    <td>${leaderboards[category][2].score}</td>
-                                </tr>
-                                <tr>
-                                    <th class="table-danger" scope="row">3</th>
-                                    <td>${leaderboards[category][3].name}</td>
-                                    <td>${leaderboards[category][3].score}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+        for (let category of Object.keys(leaderboards)) {
+            // Capitalize the category name for display
+            const categoryName = capitalizeFirstLetterOfString(category);
+
+            // Create a tab button
+            let tabButton = `
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" 
+                        id="${category}-tab" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#${category}-tab-pane" 
+                        type="button" 
+                        role="tab" 
+                        aria-controls="${category}-tab-pane" 
+                        aria-selected="${Object.keys(leaderboards)[0] === category}">
+                    ${categoryName}
+                </button>
+            </li>
             `;
 
-            $("#leaderboards-accordion").append(accordionItem);
+            // Append the tab button to the tab list
+            $("#quizTab").append(tabButton);
+
+            // Create the tab content
+            let tabContent = `
+            <div class="tab-pane fade" 
+                 id="${category}-tab-pane" 
+                 role="tabpanel" 
+                 aria-labelledby="${category}-tab">
+                 
+                <table class="table w-50">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Score</th>
+                    </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <tr>
+                            <th class="table-warning" scope="row">1</th>
+                            <td>${leaderboards[category][1].name}</td>
+                            <td>${leaderboards[category][1].score}</td>
+                        </tr>
+                        <tr>
+                            <th class="table-secondary" scope="row">2</th>
+                            <td>${leaderboards[category][2].name}</td>
+                            <td>${leaderboards[category][2].score}</td>
+                        </tr>
+                        <tr>
+                            <th class="table-danger" scope="row">3</th>
+                            <td>${leaderboards[category][3].name}</td>
+                            <td>${leaderboards[category][3].score}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            `;
+
+            // Append the tab content to the tab content container
+            $("#quizTabContent").append(tabContent);
         }
     }
 
