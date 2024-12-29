@@ -494,6 +494,7 @@ $(document).ready(function () {
         $("#quiz-end-controls").addClass("d-none");
         $("#quiz-on-podium").addClass("d-none");
 
+        $("#end-quiz-btn").removeClass("d-none");
         $("#quiz-progress").removeClass("d-none");
         $("#quiz-initial-clues-and-hints").removeClass("d-none");
         $("#quiz-current-score").removeClass("d-none");
@@ -517,6 +518,7 @@ $(document).ready(function () {
         $("#quiz-initial-clues-and-hints").removeClass("d-none");
         $("#quiz-current-score").removeClass("d-none");
         $("#quiz-answers").removeClass("d-none");
+        $("#end-quiz-btn").removeClass("d-none");
 
         drawQuestion();
     });
