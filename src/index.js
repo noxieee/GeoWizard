@@ -406,13 +406,7 @@ $(document).ready(function () {
     let leaderboards = null;
 
     /** Check if leaderboards are defined, if not, define the initial structure **/
-    if(localStorage.leaderboards) {
-        console.log(localStorage.leaderboards);
-        leaderboards = JSON.parse(localStorage.leaderboards);
-        // TODO refresh leaderboards
-        refreshLeaderboards();
-    }
-    else {
+    if(!localStorage.leaderboards || !isIntegrityOfLeaderboards()) {
         const leaderboards = {};
 
         for(let category of Object.values(constants.CATEGORY_ID_TO_KEY)) {
@@ -426,6 +420,11 @@ $(document).ready(function () {
 
         localStorage.setItem("leaderboards", JSON.stringify(leaderboards));
     }
+
+    /** Parse the leaderboards and refresh the leaderboards on frontend **/
+    leaderboards = JSON.parse(localStorage.leaderboards);
+    console.log(leaderboards);
+    refreshLeaderboards();
 
     /** Fetch the data and process it **/
     $.get("rest_countries.json", function(data) {
@@ -529,6 +528,14 @@ $(document).ready(function () {
         drawQuestion();
         updateMainScreenOnPlayBtnClick();
     });
+
+    /** Check if the defined quiz categories are the same as the categories in localstorage **/
+    function isIntegrityOfLeaderboards() {
+        const quizCategories = Object.values(constants.CATEGORY_ID_TO_KEY);
+        const localStorageCategories = Object.keys(JSON.parse(localStorage.leaderboards));
+
+        return arraysAreEqual(quizCategories, localStorageCategories);
+    }
 
     /** Show the quiz summary **/
     function updateScreenOnQuizSummary() {
@@ -828,6 +835,13 @@ function shuffleArray(array) {
     return arrayCpy;
 }
 
+/** Capitalize the first letter of a string and return the new string **/
 function capitalizeFirstLetterOfString(stringToCapitalize) {
     return stringToCapitalize.charAt(0).toUpperCase() + stringToCapitalize.slice(1);
+}
+
+/** Compare two arrays **/
+function arraysAreEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) return false;
+    return arr1.every((value, index) => value === arr2[index]);
 }
