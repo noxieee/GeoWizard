@@ -205,16 +205,16 @@
                     <div class="container d-flex flex-column gap-4 p-0 m-0">
                         <div class="container p-0 m-0">
                             <label for="name-input" class="form-label">Enter your name</label>
-                            <form class="row g-3 p-0 m-0">
+                            <form id="name-form" class="row g-3 p-0 m-0">
                                 <div class="container p-0 m-0 d-flex flex-row gap-3">
-                                    <input type="text" class="form-control form-control-lg" id="name-input" placeholder="John Doe">
+                                    <input autocomplete="off" maxlength="32" type="text" class="form-control form-control-lg " id="name-input" placeholder="John Doe">
                                     <button type="submit" class="btn btn-primary btn-lg">Save</button>
                                 </div>
                             </form>
                         </div>
 
                         <div class="container p-0 m-0">
-                            <h5 class="m-0">World leaderboard</h5>
+                            <h4 id="leaderboard-category" class="m-0">World leaderboard</h4>
 
                             <table class="table">
                                 <thead>
@@ -224,7 +224,7 @@
                                         <th scope="col">Score</th>
                                     </tr>
                                 </thead>
-                                <tbody class="table-group-divider">
+                                <tbody id="leaderboard-category-tbody" class="table-group-divider">
                                     <tr>
                                         <th scope="row">1</th>
                                         <td>John</td>
@@ -272,73 +272,21 @@
         </div>
 
         <div id="leaderboards" class="d-none container d-flex flex-column gap-4 bg-white p-4 pt-3 rounded-4 shadow-sm">
-            <h3 class="m-0">Leaderboards</h3>
+            <h2 class="m-0">Leaderboards</h2>
 
-            <!-- TODO tabs -->
-            <ul class="nav nav-tabs" id="quizTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="world-tab" data-bs-toggle="tab" data-bs-target="#world-tab-pane" type="button" role="tab" aria-controls="world-tab-pane" aria-selected="true">World</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="europe-tab" data-bs-toggle="tab" data-bs-target="#europe-tab-pane" type="button" role="tab" aria-controls="europe-tab-pane" aria-selected="false">Europe</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="asia-tab" data-bs-toggle="tab" data-bs-target="#asia-tab-pane" type="button" role="tab" aria-controls="asia-tab-pane" aria-selected="false">Asia</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="oceania-tab" data-bs-toggle="tab" data-bs-target="#oceania-tab-pane" type="button" role="tab" aria-controls="oceania-tab-pane" aria-selected="false">Oceania</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="africa-tab" data-bs-toggle="tab" data-bs-target="#africa-tab-pane" type="button" role="tab" aria-controls="africa-tab-pane" aria-selected="false">Africa</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="americas-tab" data-bs-toggle="tab" data-bs-target="#americas-tab-pane" type="button" role="tab" aria-controls="americas-tab-pane" aria-selected="false">Americas</button>
-                </li>
+            <ul class="nav nav-tabs" id="leaderboardsTabs" role="tablist">
+
             </ul>
-            <div class="tab-content" id="quizTabContent">
-                <div class="tab-pane fade show active" id="world-tab-pane" role="tabpanel" aria-labelledby="world-tab" tabindex="0">
-                    Content for World Quiz...
-                </div>
-                <div class="tab-pane fade" id="europe-tab-pane" role="tabpanel" aria-labelledby="europe-tab" tabindex="0">
-                    Content for Europe Quiz...
-                </div>
-                <div class="tab-pane fade" id="asia-tab-pane" role="tabpanel" aria-labelledby="asia-tab" tabindex="0">
-                    Content for Asia Quiz...
-                </div>
-                <div class="tab-pane fade" id="oceania-tab-pane" role="tabpanel" aria-labelledby="oceania-tab" tabindex="0">
-                    Content for Oceania Quiz...
-                </div>
-                <div class="tab-pane fade" id="africa-tab-pane" role="tabpanel" aria-labelledby="africa-tab" tabindex="0">
-                    Content for Africa Quiz...
-                </div>
-                <div class="tab-pane fade" id="americas-tab-pane" role="tabpanel" aria-labelledby="americas-tab" tabindex="0">
-                    Content for Americas Quiz...
-                </div>
+
+            <div class="tab-content" id="leaderboardTabContent">
+
             </div>
 
         </div>
 
         <div id="learn" class="d-none container d-flex flex-column gap-4 bg-white p-4 pt-3 rounded-4 shadow-sm">
-            <h3 class="m-0">Learn about countries</h3>
-            <div class="btn-group align-self-start shadow-sm" role="group" aria-label="Basic radio toggle button group">
-                <input type="radio" class="btn-check" name="learn" id="learn-world-radio" autocomplete="off" checked>
-                <label class="btn btn-outline-secondary" for="learn-world-radio">All</label>
+            <h2 class="m-0">Learn about countries</h2>
 
-                <input type="radio" class="btn-check" name="learn" id="learn-europe-radio" autocomplete="off">
-                <label class="btn btn-outline-secondary" for="learn-europe-radio">Europe</label>
-
-                <input type="radio" class="btn-check" name="learn" id="learn-asia-radio" autocomplete="off">
-                <label class="btn btn-outline-secondary" for="learn-asia-radio">Asia</label>
-
-                <input type="radio" class="btn-check" name="learn" id="learn-oceania-radio" autocomplete="off">
-                <label class="btn btn-outline-secondary" for="learn-oceania-radio">Oceania</label>
-
-                <input type="radio" class="btn-check" name="learn" id="learn-africa-radio" autocomplete="off">
-                <label class="btn btn-outline-secondary" for="learn-africa-radio">Africa</label>
-
-                <input type="radio" class="btn-check" name="learn" id="learn-americas-radio" autocomplete="off">
-                <label class="btn btn-outline-secondary" for="learn-americas-radio">Americas</label>
-            </div>
         </div>
     </div>
 

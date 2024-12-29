@@ -404,18 +404,18 @@ $(document).ready(function () {
     let dataPreprocessor = new RestCountriesDataPreprocessor();
     let quiz = null;
     let leaderboards = null;
+    let newScoreIndex = null;
 
     /** Check if leaderboards are defined, if not, define the initial structure **/
     if(!localStorage.leaderboards || !isIntegrityOfLeaderboards()) {
         const leaderboards = {};
 
         for(let category of Object.values(constants.CATEGORY_ID_TO_KEY)) {
-            leaderboards[category] = {
-                "1": {"score": "", "name": ""},
-                "2": {"score": "", "name": ""},
-                "3": {"score": "", "name": ""},
-                "unknownNamesCount": 0
-            };
+            leaderboards[category] = [
+                {"score": "", "name": ""},
+                {"score": "", "name": ""},
+                {"score": "", "name": ""}
+            ];
         }
 
         localStorage.setItem("leaderboards", JSON.stringify(leaderboards));
@@ -492,6 +492,7 @@ $(document).ready(function () {
         $("#quiz").addClass("d-none");
         $("#quiz-final-score").addClass("d-none");
         $("#quiz-end-controls").addClass("d-none");
+        $("#quiz-on-podium").addClass("d-none");
 
         $("#quiz-progress").removeClass("d-none");
         $("#quiz-initial-clues-and-hints").removeClass("d-none");
@@ -510,6 +511,7 @@ $(document).ready(function () {
         $("#quiz-summary").addClass("d-none");
         $("#quiz-final-score").addClass("d-none");
         $("#quiz-end-controls").addClass("d-none");
+        $("#quiz-on-podium").addClass("d-none");
 
         $("#quiz-progress").removeClass("d-none");
         $("#quiz-initial-clues-and-hints").removeClass("d-none");
@@ -526,6 +528,19 @@ $(document).ready(function () {
         quiz = new Quiz(dataPreprocessor.getProcessedDataByCategory(currentQuizCategory));
         drawQuestion();
         updateMainScreenOnPlayBtnClick();
+    });
+
+    /** Event listener on the name textfield button **/
+    $("#name-form").submit(function () {
+        event.preventDefault();
+        const name = $("#name-input").val();
+        $("#name-input").val("");
+
+        $("#leaderboard-category-tbody").children(`:nth-child(${newScoreIndex + 1})`).children(":nth-child(2)").text(name);
+
+        leaderboards[currentQuizCategory][newScoreIndex].name = name;
+        localStorage.setItem("leaderboards", JSON.stringify(leaderboards));
+        refreshLeaderboards();
     });
 
     /** Check if the defined quiz categories are the same as the categories in localstorage **/
@@ -547,13 +562,70 @@ $(document).ready(function () {
         $("#quiz-final-score-label").text(quiz.getOverallScore());
         setSummaryItems();
 
-        // TODO if highscore, show the highscore section and update localstorage
+        newScoreIndex = isHighscore(quiz.getOverallScore());
+
+        if(newScoreIndex !== null) {
+            leaderboards[currentQuizCategory].splice(newScoreIndex, 0, {
+                "name": "Player",
+                "score": quiz.getOverallScore()
+            });
+
+            leaderboards[currentQuizCategory].pop();
+
+            localStorage.setItem("leaderboards", JSON.stringify(leaderboards));
+            refreshLeaderboards();
+            updateLeaderboardOnPodium(newScoreIndex);
+            $("#quiz-on-podium").removeClass("d-none");
+        }
 
         $("#quiz-summary").removeClass("d-none");
         $("#quiz-final-score").removeClass("d-none");
         $("#quiz-end-controls").removeClass("d-none");
     }
 
+    // TODO comment
+    function updateLeaderboardOnPodium(index) {
+        $("#leaderboard-category").text(capitalizeFirstLetterOfString(currentQuizCategory) + " leaderboard");
+        $("#leaderboard-category-tbody").empty();
+
+        let position = 1;
+
+        for(let podium of leaderboards[currentQuizCategory]) {
+            const tRow = `
+                <tr>
+                    <th scope="row">${position}</th>
+                    <td>${podium.name}</td>
+                    <td>${podium.score}</td>
+                </tr>
+            `;
+
+            $("#leaderboard-category-tbody").append(tRow);
+
+            position++;
+        }
+
+        console.log(index);
+        $("#leaderboard-category-tbody").children(`:nth-child(${index + 1})`).addClass("table-success");
+    }
+
+    // TODO comment
+    function isHighscore(score) {
+        let newScoreIndex = null;
+        const categoryLeaderboard = leaderboards[currentQuizCategory];
+
+        for(let i = 0; i < 3; i++) {
+            const podium = categoryLeaderboard[i];
+
+            if(podium.score === "" || score > podium.score) {
+                newScoreIndex = i;
+                break;
+            }
+        }
+
+        return newScoreIndex;
+    }
+
+    // TODO comment
     function setSummaryItems() {
         $("#quiz-summary-tbody").empty();
 
@@ -619,14 +691,12 @@ $(document).ready(function () {
     /** Function to refresh leaderboards on frontend **/
     function refreshLeaderboards() {
         // Clear existing tabs and tab content
-        $("#quizTab").empty();
-        $("#quizTabContent").empty();
+        $("#leaderboardsTabs").empty();
+        $("#leaderboardTabContent").empty();
 
         for (let category of Object.keys(leaderboards)) {
-            // Capitalize the category name for display
             const categoryName = capitalizeFirstLetterOfString(category);
 
-            // Create a tab button
             let tabButton = `
             <li class="nav-item" role="presentation">
                 <button class="nav-link" 
@@ -635,17 +705,14 @@ $(document).ready(function () {
                         data-bs-target="#${category}-tab-pane" 
                         type="button" 
                         role="tab" 
-                        aria-controls="${category}-tab-pane" 
-                        aria-selected="${Object.keys(leaderboards)[0] === category}">
+                        aria-controls="${category}-tab-pane">
                     ${categoryName}
                 </button>
             </li>
             `;
 
-            // Append the tab button to the tab list
-            $("#quizTab").append(tabButton);
+            $("#leaderboardsTabs").append(tabButton);
 
-            // Create the tab content
             let tabContent = `
             <div class="tab-pane fade" 
                  id="${category}-tab-pane" 
@@ -663,27 +730,29 @@ $(document).ready(function () {
                     <tbody class="table-group-divider">
                         <tr>
                             <th class="table-warning" scope="row">1</th>
+                            <td>${leaderboards[category][0].name}</td>
+                            <td>${leaderboards[category][0].score}</td>
+                        </tr>
+                        <tr>
+                            <th class="table-secondary" scope="row">2</th>
                             <td>${leaderboards[category][1].name}</td>
                             <td>${leaderboards[category][1].score}</td>
                         </tr>
                         <tr>
-                            <th class="table-secondary" scope="row">2</th>
+                            <th class="table-danger" scope="row">3</th>
                             <td>${leaderboards[category][2].name}</td>
                             <td>${leaderboards[category][2].score}</td>
-                        </tr>
-                        <tr>
-                            <th class="table-danger" scope="row">3</th>
-                            <td>${leaderboards[category][3].name}</td>
-                            <td>${leaderboards[category][3].score}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             `;
 
-            // Append the tab content to the tab content container
-            $("#quizTabContent").append(tabContent);
+            $("#leaderboardTabContent").append(tabContent);
         }
+
+        $("#leaderboardsTabs").children().first().find("button").addClass("active");
+        $("#leaderboardTabContent").children().first().addClass("show active");
     }
 
     /** Add additional hint **/
