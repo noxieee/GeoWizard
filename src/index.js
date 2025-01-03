@@ -114,13 +114,15 @@ class RestCountriesDataPreprocessor {
 
                 for(let suffix of country.idd.suffixes) {
                     if(i > 4) {
-                        prefix += "...)";
                         break;
                     }
 
                     prefix += suffix + ", ";
                     i++;
                 }
+
+                prefix = prefix.slice(0, -2);
+                prefix += "...)";
             }
 
             return prefix.length > 0 ? prefix : "No data.";
@@ -481,6 +483,8 @@ $(document).ready(function () {
         $("#menu").removeClass("d-none");
         $("#intro").removeClass("d-none");
         $("#categories").removeClass("d-none");
+
+        $("#quiz-next-step-btn").text("Next country");
     });
 
     /** Event listener for the back to menu button **/
