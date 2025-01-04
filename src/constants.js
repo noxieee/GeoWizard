@@ -1,4 +1,4 @@
-export const API_BASE_URL = "https://restcountries.com/v3.1";
+export const API_BASE_URL = "https://restcountries.com/v3.1/all/";
 export const API_FIELDS = "?fields=cca3,area,name,region,subregion,population,unMember,idd,landlocked,car,currencies,borders,flags,capital,maps";
 export const QUIZ_QUESTION_COUNT = 10;
 export const QUIZ_QUESTION_OPTION_COUNT = 8;

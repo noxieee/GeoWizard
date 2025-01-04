@@ -455,7 +455,7 @@ $(document).ready(function () {
     learnCache = JSON.parse(localStorage.learnCache);
 
     /** Fetch the data and process it **/
-    $.get("rest_countries.json", function(data) {
+    $.get(constants.API_BASE_URL + constants.API_FIELDS, function(data) {
         dataPreprocessor.setInitialData(data);
         dataPreprocessor.processData();
         createLearnSection();
