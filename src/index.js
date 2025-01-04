@@ -403,10 +403,21 @@ class QuizQuestion {
 }
 
 $(document).ready(function () {
+    /** Selectors **/
+    const introSection = $("#intro");
+    const menuSection = $("#menu");
+    const categoriesSection = $("#categories");
+    const quizSection = $("#quiz");
+    const leaderboardSection = $("#leaderboards");
+    const learnSection = $("#learn");
+
+    /** Vital variables **/
+    let currentQuizCategory = null;
     let dataPreprocessor = new RestCountriesDataPreprocessor();
     let quiz = null;
     let leaderboards = null;
     let newScoreIndex = null;
+    let currentMenuSelection = $('input[name="menu"]:checked').attr('id');
 
     /** Check if leaderboards are defined, if not, define the initial structure **/
     if(!localStorage.leaderboards || !isIntegrityOfLeaderboards()) {
@@ -433,21 +444,7 @@ $(document).ready(function () {
         dataPreprocessor.processData();
     });
 
-    /** Sections on the main page selectors **/
-    const introSection = $("#intro");
-    const menuSection = $("#menu");
-    const categoriesSection = $("#categories");
-    const quizSection = $("#quiz");
-    const leaderboardSection = $("#leaderboards");
-    const learnSection = $("#learn");
-
-    /** Current selected menu item **/
-    let currentMenuSelection = $('input[name="menu"]:checked').attr('id');
-
-    /** Last selected category when clicked on Play button **/
-    let currentQuizCategory = null;
-
-    /** Event listener for the Menu radios **/
+    /** Event listener for the Menu buttons **/
     $('input[name="menu"]').on('change', function () {
         currentMenuSelection = $(this).attr('id');
         updateMainScreenContentByMenuSelection();
@@ -469,6 +466,11 @@ $(document).ready(function () {
         if(quiz.isLastQuestion()) {
             updateScreenOnQuizSummary();
             $(this).text("Next country");
+            $(this).append(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                        </svg>
+            `);
             return;
         }
 
@@ -485,6 +487,11 @@ $(document).ready(function () {
         $("#categories").removeClass("d-none");
 
         $("#quiz-next-step-btn").text("Next country");
+        $("#quiz-next-step-btn").append(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                        </svg>
+            `);
     });
 
     /** Event listener for the back to menu button **/
@@ -674,6 +681,11 @@ $(document).ready(function () {
     function drawQuestion() {
         if(quiz.isLastQuestion()) {
             $("#quiz-next-step-btn").text("Finish quiz");
+            $("#quiz-next-step-btn").append(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                        </svg>
+            `);
         }
 
         $("#hintBtn").removeClass("disabled");
@@ -823,11 +835,19 @@ $(document).ready(function () {
         if(isCorrect) {
             let points = quiz.getCurrentQuestionPoints();
             $("#quiz-correct-alert").text("Correct! You earn " + points + " points.").removeClass("d-none");
-            $(this).addClass("btn-success").removeClass("btn-outline-primary").prepend("✔ ");
+            $(this).addClass("btn-success").removeClass("btn-outline-primary").prepend(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                        <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+                    </svg>
+                `);
         }
         else {
             $("#quiz-wrong-alert").removeClass("d-none");
-            $(this).addClass("btn-danger").removeClass("btn-outline-primary").prepend("🗙 ");
+            $(this).addClass("btn-danger").removeClass("btn-outline-primary").prepend(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                    </svg>
+                `);
             $(`#${quiz.getCurrentQuestionCorrectAnswerIdx()}`).addClass("btn-success").removeClass("btn-outline-primary");
         }
 
