@@ -573,11 +573,6 @@ $(document).ready(function () {
         refreshLeaderboards();
     });
 
-    // TODO comment
-    $("#learnTabs button").click(function () {
-        currentLearnCategory = $(this).val();
-    });
-
     /** Show the quiz summary **/
     function updateScreenOnQuizSummary() {
         $("#end-quiz-btn").addClass("d-none");
@@ -724,7 +719,6 @@ $(document).ready(function () {
     function createLearnSection() {
         for (let category of Object.keys(learnCache)) {
             const categoryName = capitalizeFirstLetterOfString(category);
-            let countryCachedIndex = learnCache[category];
 
             let tabButton = `
                 <li class="nav-item" role="presentation">
@@ -750,6 +744,53 @@ $(document).ready(function () {
             updateCountryInfo(category, null, null);
         }
 
+        $("#learnTabs li button").click(function () {
+            currentLearnCategory = $(this).val();
+
+            if(currentLearnCategory === "search") {
+                $("#learn-controls").addClass("d-none");
+            }
+            else {
+                $("#learn-controls").removeClass("d-none");
+            }
+
+            $("#learn-counter").text(`${learnCache[currentLearnCategory] + 1} / ${dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length}`);
+        });
+
+        $("#learn-previous-btn").click(function () {
+            let previousIdx = learnCache[currentLearnCategory];
+            let dataLength = dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length;
+            previousIdx -= 1;
+
+            if(previousIdx < 0) {
+                previousIdx = dataLength - 1;
+            }
+
+            learnCache[currentLearnCategory] = previousIdx;
+            localStorage.setItem("learnCache", JSON.stringify(learnCache));
+
+            updateCountryInfo(currentLearnCategory);
+
+            $("#learn-counter").text(`${previousIdx + 1}/${dataLength}`);
+        });
+
+        $("#learn-next-btn").click(function () {
+            let nextIdx = learnCache[currentLearnCategory];
+            let dataLength = dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length;
+            nextIdx += 1;
+
+            if(nextIdx > dataLength - 1) {
+                nextIdx = 0;
+            }
+
+            learnCache[currentLearnCategory] = nextIdx;
+            localStorage.setItem("learnCache", JSON.stringify(learnCache));
+
+            updateCountryInfo(currentLearnCategory);
+
+            $("#learn-counter").text(`${nextIdx + 1}/${dataLength}`);
+        });
+
         $("#learnTabs").children().first().find("button").addClass("active");
         $("#learnTabContent").children().first().addClass("show active");
         currentLearnCategory = "search";
@@ -766,27 +807,8 @@ $(document).ready(function () {
                     <div id="learn-${category}-tab-pane-country" class="container d-flex flex-column p-0 m-0 gap-4">
                         
                     </div>
-                    
-                    <div class="container p-0 m0 mt-5 d-flex gap-3 align-items-center">
-                        <button id="learn-previous-country" class="btn btn-primary btn-lg" style="width: 164px">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-                            </svg>
-                            Previous
-                        </button>
-                        
-                        <h5 id="learn-${category}-counter" class="p-0 m-0">${learnCache[category]}/${dataPreprocessor.getProcessedDataByCategory(category).length}</h5>
-                        
-                        <button id="learn-next-country" class="btn btn-primary btn-lg" style="width: 164px">
-                            Next
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-                            </svg>
-                        </button>
-                    </div>
                 </div>
             `;
-
         return tabContent;
     }
 
@@ -810,7 +832,7 @@ $(document).ready(function () {
                 <img class="border border-dark-subtle rounded-1" src=${countryData.flag} alt="" height="124">
                 <div class="container d-flex flex-column gap-3 p-0 m-0">
                     <h3 class="p-0 m-0">${countryData.nameCommon}</h3>
-                    <a href="${countryData.maps}" class="d-flex gap-2 align-items-center btn btn-outline-secondary align-self-start" target="_blank">
+                    <a href="${countryData.maps}" class="d-flex gap-2 align-items-center btn btn-outline-dark align-self-start" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
                             <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
                             <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
