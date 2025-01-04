@@ -413,14 +413,16 @@ $(document).ready(function () {
 
     /** Vital variables **/
     let currentQuizCategory = null;
+    let currentLearnCategory = null;
     let dataPreprocessor = new RestCountriesDataPreprocessor();
     let quiz = null;
     let leaderboards = null;
+    let learnCache = null;
     let newScoreIndex = null;
     let currentMenuSelection = $('input[name="menu"]:checked').attr('id');
 
     /** Check if leaderboards are defined, if not, define the initial structure **/
-    if(!localStorage.leaderboards || !isIntegrityOfLeaderboards()) {
+    if(!localStorage.leaderboards) {
         const leaderboards = {};
 
         for(let category of Object.values(constants.CATEGORY_ID_TO_KEY)) {
@@ -434,14 +436,29 @@ $(document).ready(function () {
         localStorage.setItem("leaderboards", JSON.stringify(leaderboards));
     }
 
+    /** Check if learn cache structure is defined, if not, define the initial structure **/
+    if(!localStorage.learnCache) {
+        const learnCache = {};
+
+        for(let category of Object.values(constants.CATEGORY_ID_TO_KEY)) {
+            learnCache[category] = 0;
+        }
+
+        localStorage.setItem("learnCache", JSON.stringify(learnCache));
+    }
+
     /** Parse the leaderboards and refresh the leaderboards on frontend **/
     leaderboards = JSON.parse(localStorage.leaderboards);
     refreshLeaderboards();
+
+    /** Parse the learnCache and refresh learn section on frontend **/
+    learnCache = JSON.parse(localStorage.learnCache);
 
     /** Fetch the data and process it **/
     $.get("rest_countries.json", function(data) {
         dataPreprocessor.setInitialData(data);
         dataPreprocessor.processData();
+        createLearnSection();
     });
 
     /** Event listener for the Menu buttons **/
@@ -467,9 +484,9 @@ $(document).ready(function () {
             updateScreenOnQuizSummary();
             $(this).text("Next country");
             $(this).append(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-                        </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                </svg>
             `);
             return;
         }
@@ -488,10 +505,10 @@ $(document).ready(function () {
 
         $("#quiz-next-step-btn").text("Next country");
         $("#quiz-next-step-btn").append(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
-                        </svg>
-            `);
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+        `);
     });
 
     /** Event listener for the back to menu button **/
@@ -556,13 +573,10 @@ $(document).ready(function () {
         refreshLeaderboards();
     });
 
-    /** Check if the defined quiz categories are the same as the categories in localstorage **/
-    function isIntegrityOfLeaderboards() {
-        const quizCategories = Object.values(constants.CATEGORY_ID_TO_KEY);
-        const localStorageCategories = Object.keys(JSON.parse(localStorage.leaderboards));
-
-        return arraysAreEqual(quizCategories, localStorageCategories);
-    }
+    // TODO comment
+    $("#learnTabs button").click(function () {
+        currentLearnCategory = $(this).val();
+    });
 
     /** Show the quiz summary **/
     function updateScreenOnQuizSummary() {
@@ -706,64 +720,252 @@ $(document).ready(function () {
         updateAnswers();
     }
 
+    /** Function to refresh learn section on frontend **/
+    function createLearnSection() {
+        for (let category of Object.keys(learnCache)) {
+            const categoryName = capitalizeFirstLetterOfString(category);
+            let countryCachedIndex = learnCache[category];
+
+            let tabButton = `
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" 
+                            id="learn-${category}-tab" 
+                            data-bs-toggle="tab" 
+                            data-bs-target="#learn-${category}-tab-pane" 
+                            type="button" 
+                            role="tab" 
+                            aria-controls="learn-${category}-tab-pane"
+                            value="${category}">
+                        ${categoryName}
+                    </button>
+                </li>
+            `;
+
+            $("#learnTabs").append(tabButton);
+
+            let tabContent = constructTabContent(category);
+
+            $("#learnTabContent").append(tabContent);
+
+            updateCountryInfo(category, null);
+        }
+
+        $("#learnTabs").children().first().find("button").addClass("active");
+        $("#learnTabContent").children().first().addClass("show active");
+        currentLearnCategory = "search";
+    }
+
+    // TODO comment
+    function constructTabContent(category) {
+        let tabContent = `
+                <div class="tab-pane fade" 
+                     id="learn-${category}-tab-pane" 
+                     role="tabpanel" 
+                     aria-labelledby="learn-${category}-tab">
+                     
+                    <div id="learn-${category}-tab-pane-country" class="container d-flex flex-column p-0 m-0 gap-4">
+                        
+                    </div>
+                    
+                    <div class="container p-0 m0 mt-5 d-flex gap-3 align-items-center">
+                        <button id="learn-previous-country" class="btn btn-primary btn-lg" style="width: 164px">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                            </svg>
+                            Previous
+                        </button>
+                        
+                        <h5 class="p-0 m-0">${learnCache[category]}/${dataPreprocessor.getProcessedDataByCategory(category).length}</h5>
+                        
+                        <button id="learn-next-country" class="btn btn-primary btn-lg" style="width: 164px">
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+        return tabContent;
+    }
+
+    //TODO comment
+    function updateCountryInfo(category, name) {
+        let countryData = null;
+
+        if(name === null) {
+            countryData = dataPreprocessor.getProcessedDataByCategory(category)[learnCache[category]];
+        }
+        else {
+            // TODO search for country in api
+        }
+
+        $(`#learn-${category}-tab-pane-country`).empty();
+        $(`#learn-${category}-tab-pane-country`).append(`
+            <div class="container d-flex flex-row p-0 m-0 gap-3">
+                <img class="border border-dark-subtle rounded-1" src=${countryData.flag} alt="" height="124">
+                <div class="container d-flex flex-column gap-3 p-0 m-0">
+                    <h3 class="p-0 m-0">${countryData.nameCommon}</h3>
+                    <a href="${countryData.maps}" class="d-flex gap-2 align-items-center btn btn-outline-secondary align-self-start" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                        </svg>
+                        Show on google maps
+                    </a>
+                </div>
+            </div>
+
+       
+            <div class="container d-flex flex-row gap-5 p-0 m-0">
+                <div class="container p-0 m-0">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Official name</h5>
+                                <p class="m-0 col">${countryData.nameOfficial}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Capital(s)</h5>
+                                <p class="m-0 col">${countryData.capital}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Region</h5>
+                                <p class="m-0 col">${countryData.region}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Subregion</h5>
+                                <p class="m-0 col">${countryData.subregion}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Borders</h5>
+                                <p class="m-0 col">${countryData.borders}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Area</h5>
+                                <p class="m-0 col">${countryData.area}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Population</h5>
+                                <p class="m-0 col">${countryData.population}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="container p-0 m-0">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Sea access</h5>
+                                <p class="m-0 col">${countryData.hasSea}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">UN member</h5>
+                                <p class="m-0 col">${countryData.unMember}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Driving side</h5>
+                                <p class="m-0 col">${countryData.drivingSide}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Car license plate</h5>
+                                <p class="m-0 col">${countryData.carPlate}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">CCA3 identificator</h5>
+                                <p class="m-0 col">${countryData.cca3}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Phone prefix</h5>
+                                <p class="m-0 col">${countryData.phonePrefix}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        `);
+    }
+
     /** Function to refresh leaderboards on frontend **/
     function refreshLeaderboards() {
         // Clear existing tabs and tab content
-        $("#leaderboardsTabs").empty();
-        $("#leaderboardTabContent").empty();
 
         for (let category of Object.keys(leaderboards)) {
             const categoryName = capitalizeFirstLetterOfString(category);
 
             let tabButton = `
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" 
-                        id="${category}-tab" 
-                        data-bs-toggle="tab" 
-                        data-bs-target="#${category}-tab-pane" 
-                        type="button" 
-                        role="tab" 
-                        aria-controls="${category}-tab-pane">
-                    ${categoryName}
-                </button>
-            </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" 
+                            id="${category}-tab" 
+                            data-bs-toggle="tab" 
+                            data-bs-target="#${category}-tab-pane" 
+                            type="button" 
+                            role="tab" 
+                            aria-controls="${category}-tab-pane">
+                        ${categoryName}
+                    </button>
+                </li>
             `;
 
             $("#leaderboardsTabs").append(tabButton);
 
             let tabContent = `
-            <div class="tab-pane fade" 
-                 id="${category}-tab-pane" 
-                 role="tabpanel" 
-                 aria-labelledby="${category}-tab">
-                 
-                <table class="table w-50">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Score</th>
-                    </tr>
-                    </thead>
-                    <tbody class="table-group-divider">
+                <div class="tab-pane fade" 
+                     id="${category}-tab-pane" 
+                     role="tabpanel" 
+                     aria-labelledby="${category}-tab">
+                     
+                    <table class="table w-50">
+                        <thead>
                         <tr>
-                            <th class="table-warning" scope="row">1</th>
-                            <td>${leaderboards[category][0].name}</td>
-                            <td>${leaderboards[category][0].score}</td>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Score</th>
                         </tr>
-                        <tr>
-                            <th class="table-secondary" scope="row">2</th>
-                            <td>${leaderboards[category][1].name}</td>
-                            <td>${leaderboards[category][1].score}</td>
-                        </tr>
-                        <tr>
-                            <th class="table-danger" scope="row">3</th>
-                            <td>${leaderboards[category][2].name}</td>
-                            <td>${leaderboards[category][2].score}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <tr>
+                                <th class="table-warning" scope="row">1</th>
+                                <td>${leaderboards[category][0].name}</td>
+                                <td>${leaderboards[category][0].score}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-secondary" scope="row">2</th>
+                                <td>${leaderboards[category][1].name}</td>
+                                <td>${leaderboards[category][1].score}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-danger" scope="row">3</th>
+                                <td>${leaderboards[category][2].name}</td>
+                                <td>${leaderboards[category][2].score}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             `;
 
             $("#leaderboardTabContent").append(tabContent);
