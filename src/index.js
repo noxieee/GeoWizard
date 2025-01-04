@@ -632,7 +632,7 @@ $(document).ready(function () {
         }
 
         console.log(index);
-        $("#leaderboard-category-tbody").children(`:nth-child(${index + 1})`).addClass("table-success");
+        $("#leaderboard-category-tbody").children(`:nth-child(${index + 1})`).addClass("table-info");
     }
 
     // TODO comment
@@ -747,7 +747,7 @@ $(document).ready(function () {
 
             $("#learnTabContent").append(tabContent);
 
-            updateCountryInfo(category, null);
+            updateCountryInfo(category, null, null);
         }
 
         $("#learnTabs").children().first().find("button").addClass("active");
@@ -775,7 +775,7 @@ $(document).ready(function () {
                             Previous
                         </button>
                         
-                        <h5 class="p-0 m-0">${learnCache[category]}/${dataPreprocessor.getProcessedDataByCategory(category).length}</h5>
+                        <h5 id="learn-${category}-counter" class="p-0 m-0">${learnCache[category]}/${dataPreprocessor.getProcessedDataByCategory(category).length}</h5>
                         
                         <button id="learn-next-country" class="btn btn-primary btn-lg" style="width: 164px">
                             Next
@@ -791,14 +791,17 @@ $(document).ready(function () {
     }
 
     //TODO comment
-    function updateCountryInfo(category, name) {
+    function updateCountryInfo(category, name, index) {
         let countryData = null;
 
-        if(name === null) {
+        if(category !== null) {
             countryData = dataPreprocessor.getProcessedDataByCategory(category)[learnCache[category]];
         }
-        else {
+        else if(name !== null) {
             // TODO search for country in api
+        }
+        else {
+            // TODO data by index
         }
 
         $(`#learn-${category}-tab-pane-country`).empty();
