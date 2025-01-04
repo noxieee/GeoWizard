@@ -467,6 +467,16 @@ $(document).ready(function () {
         updateMainScreenContentByMenuSelection();
     });
 
+    // TODO comment
+    $("#learn-random-btn").click(function () {
+        let max = dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length - 1;
+        let randomIdx = getRandomIntInclusive(0, max);
+        updateCountryInfo(currentLearnCategory, null, randomIdx);
+        learnCache[currentLearnCategory] = randomIdx;
+        localStorage.setItem("learnCache", JSON.stringify(learnCache));
+        updateLearnCounter();
+    });
+
     /** Event listener for the hint button **/
     $("#hintBtn").click(function () {
         addAdditionalHint();
@@ -635,7 +645,6 @@ $(document).ready(function () {
             position++;
         }
 
-        console.log(index);
         $("#leaderboard-category-tbody").children(`:nth-child(${index + 1})`).addClass("table-info");
     }
 
@@ -788,7 +797,7 @@ $(document).ready(function () {
             learnCache[currentLearnCategory] = previousIdx;
             localStorage.setItem("learnCache", JSON.stringify(learnCache));
 
-            updateCountryInfo(currentLearnCategory);
+            updateCountryInfo(currentLearnCategory, null, null);
             updateLearnCounter();
         });
 
@@ -804,7 +813,7 @@ $(document).ready(function () {
             learnCache[currentLearnCategory] = nextIdx;
             localStorage.setItem("learnCache", JSON.stringify(learnCache));
 
-            updateCountryInfo(currentLearnCategory);
+            updateCountryInfo(currentLearnCategory, null, null);
             updateLearnCounter();
         });
 
@@ -838,14 +847,9 @@ $(document).ready(function () {
     function updateCountryInfo(category, name, index) {
         let countryData;
 
-        if(category !== null) {
-            countryData = dataPreprocessor.getProcessedDataByCategory(category)[learnCache[category]];
-        }
-        else if(name !== null) {
+        if(name !== null) {
             countryData = getCountryByName(name);
             category = "search";
-            console.log(name);
-            console.log(countryData);
 
             $(`#learn-${category}-tab-pane-country`).empty();
 
@@ -869,15 +873,18 @@ $(document).ready(function () {
             else {
                 countryData = countryData[0];
             }
-        } else {
+        } else if(index !== null) {
             countryData = dataPreprocessor.getProcessedDataByCategory(category)[index];
+        }
+        else {
+            countryData = dataPreprocessor.getProcessedDataByCategory(category)[learnCache[category]];
         }
 
         $(`#learn-${category}-tab-pane-country`).empty();
 
         $(`#learn-${category}-tab-pane-country`).append(`
             <div class="container d-flex flex-row p-0 m-0 gap-3">
-                <img class="border border-dark-subtle rounded-1" src=${countryData.flag} alt="" height="124">
+                <img class="border border-dark-subtle rounded-1" src=${countryData.flag} alt="" width="184">
                 <div class="container d-flex flex-column gap-3 p-0 m-0">
                     <h3 class="p-0 m-0">${countryData.nameCommon}</h3>
                     <a href="${countryData.maps}" class="d-flex gap-2 align-items-center btn btn-outline-dark align-self-start" target="_blank">
@@ -1234,10 +1241,11 @@ function capitalizeFirstLetterOfString(stringToCapitalize) {
     return stringToCapitalize.charAt(0).toUpperCase() + stringToCapitalize.slice(1);
 }
 
-/** Compare two arrays **/
-function arraysAreEqual(arr1, arr2) {
-    if (arr1.length !== arr2.length) return false;
-    return arr1.every((value, index) => value === arr2[index]);
+/** Get random integer in range **/
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /** FROM GPT - fuzzysearch **/
@@ -1258,6 +1266,7 @@ function levenshteinDistance(a, b) {
     return matrix[a.length][b.length];
 }
 
+/** FROM GPT - fuzzysearch **/
 function fuzzySearch(query, objects, keys, threshold = 1) {
     query = query.toLowerCase();
     return objects.filter((obj) => {
