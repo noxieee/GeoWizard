@@ -1000,6 +1000,8 @@ $(document).ready(function () {
     /** Function to refresh leaderboards on frontend **/
     function refreshLeaderboards() {
         // Clear existing tabs and tab content
+        $("#leaderboardsTabs").empty();
+        $("#leaderboardTabContent").empty();
 
         for (let category of Object.keys(leaderboards)) {
             const categoryName = capitalizeFirstLetterOfString(category);
