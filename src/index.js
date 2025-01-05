@@ -568,6 +568,7 @@ $(document).ready(function () {
         quiz = new Quiz(dataPreprocessor.getProcessedDataByCategory(currentQuizCategory));
         drawQuestion();
         updateMainScreenOnPlayBtnClick();
+        $("#quiz-thumbnail").attr("src", `../assets/${currentQuizCategory}.png`);
     });
 
     /** Event listener on the name textfield button **/
@@ -587,8 +588,12 @@ $(document).ready(function () {
     $("#country-form").submit(function () {
         event.preventDefault();
         const name = $("#country-name-input").val();
-        $("#country-name-input").val("");
 
+        if(name.length === 0 ) {
+            return;
+        }
+
+        $("#country-name-input").val("");
         updateCountryInfo(null, name, null);
     });
 
