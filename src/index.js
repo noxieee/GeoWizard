@@ -892,7 +892,7 @@ $(document).ready(function () {
                 <div style="width: 184px">
                     <img class="border border-dark-subtle rounded-1" src=${countryData.flag} alt="" width="184px">
                 </div>
-                <div class="container d-flex flex-column gap-3 p-0 m-0" style="min-height: 136px">
+                <div class="container d-flex flex-column gap-3 p-0 m-0" style="min-height: 140px">
                     <h3 class="p-0 m-0">${countryData.nameCommon}</h3>
                     <a href="${countryData.maps}" class="d-flex gap-2 align-items-center btn btn-outline-dark align-self-start" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
