@@ -402,7 +402,45 @@ class QuizQuestion {
     }
 }
 
+window.addEventListener("popstate", (event) => {
+    let state = event.state;
+    console.log(state);
+
+    if(state.page === "home") {
+        $("#intro").removeClass("d-none");
+        $("#menu").removeClass("d-none");
+        $("#categories").removeClass("d-none");
+        $("#quiz").addClass("d-none");
+
+        $("#quiz-summary").addClass("d-none");
+        $("#quiz-final-score").addClass("d-none");
+        $("#quiz-end-controls").addClass("d-none");
+        $("#quiz-on-podium").addClass("d-none");
+
+        $("#end-quiz-btn").removeClass("d-none");
+        $("#quiz-progress").removeClass("d-none");
+        $("#quiz-initial-clues-and-hints").removeClass("d-none");
+        $("#quiz-current-score").removeClass("d-none");
+        $("#quiz-answers").removeClass("d-none");
+        $("#menu").removeClass("d-none");
+        $("#intro").removeClass("d-none");
+        $("#categories").removeClass("d-none");
+
+        $("#quiz-next-step-btn").text("Next country");
+        $("#quiz-next-step-btn").append(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="mb-1 bi bi-chevron-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                </svg>
+            `);
+    }
+    else {
+        history.replaceState({page: "home"}, null, "?page=home");
+    }
+});
+
 $(document).ready(function () {
+    history.replaceState({page: "home"}, null, "?page=home");
+
     /** Selectors **/
     const introSection = $("#intro");
     const menuSection = $("#menu");
@@ -498,6 +536,9 @@ $(document).ready(function () {
                     <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
                 </svg>
             `);
+
+            history.replaceState({page: "summary"}, null, "?page=summary");
+
             return;
         }
 
@@ -519,6 +560,8 @@ $(document).ready(function () {
                 <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
             </svg>
         `);
+
+        history.replaceState({page: "home"}, null, "?page=home");
     });
 
     /** Event listener for the back to menu button **/
@@ -540,6 +583,8 @@ $(document).ready(function () {
         $("#menu").removeClass("d-none");
         $("#intro").removeClass("d-none");
         $("#categories").removeClass("d-none");
+
+        history.replaceState({page: "home"}, null, "?page=home");
     });
 
     /** Event listener for the play again button **/
@@ -559,6 +604,8 @@ $(document).ready(function () {
         $("#end-quiz-btn").removeClass("d-none");
 
         drawQuestion();
+
+        history.replaceState({page: "quiz"}, null, "?page=quiz");
     });
 
     /** Event listeners on the play buttons on category cards **/
@@ -569,6 +616,8 @@ $(document).ready(function () {
         drawQuestion();
         updateMainScreenOnPlayBtnClick();
         $("#quiz-thumbnail").attr("src", `./assets/${currentQuizCategory}.png`);
+
+        history.pushState({page: "quiz"}, null, "?page=quiz");
     });
 
     /** Event listener on the name textfield button **/
