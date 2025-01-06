@@ -404,7 +404,6 @@ class QuizQuestion {
 
 window.addEventListener("popstate", (event) => {
     let state = event.state;
-    console.log(state);
 
     if(state.page === "home") {
         $("#intro").removeClass("d-none");
