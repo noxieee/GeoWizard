@@ -597,6 +597,47 @@ $(document).ready(function () {
         updateCountryInfo(null, name, null);
     });
 
+    // TODO comment
+    $("#learn-reset-btn").click(function () {
+        learnCache[currentLearnCategory] = 0;
+        localStorage.setItem("learnCache", JSON.stringify(learnCache));
+        updateCountryInfo(currentLearnCategory, null, null);
+        updateLearnCounter();
+    });
+
+    // TODO comment
+    $("#learn-previous-btn").click(function () {
+        let previousIdx = learnCache[currentLearnCategory];
+        let dataLength = dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length;
+        previousIdx -= 1;
+
+        if(previousIdx < 0) {
+            previousIdx = dataLength - 1;
+        }
+
+        learnCache[currentLearnCategory] = previousIdx;
+        localStorage.setItem("learnCache", JSON.stringify(learnCache));
+
+        updateCountryInfo(currentLearnCategory, null, null);
+        updateLearnCounter();
+    });
+
+    $("#learn-next-btn").click(function () {
+        let nextIdx = learnCache[currentLearnCategory];
+        let dataLength = dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length;
+        nextIdx += 1;
+
+        if(nextIdx > dataLength - 1) {
+            nextIdx = 0;
+        }
+
+        learnCache[currentLearnCategory] = nextIdx;
+        localStorage.setItem("learnCache", JSON.stringify(learnCache));
+
+        updateCountryInfo(currentLearnCategory, null, null);
+        updateLearnCounter();
+    });
+
     /** Show the quiz summary **/
     function updateScreenOnQuizSummary() {
         $("#end-quiz-btn").addClass("d-none");
@@ -778,47 +819,6 @@ $(document).ready(function () {
                 $("#learn-controls").removeClass("d-none");
             }
 
-            updateLearnCounter();
-        });
-
-        // TODO comment
-        $("#learn-reset-btn").click(function () {
-            learnCache[currentLearnCategory] = 0;
-            localStorage.setItem("learnCache", JSON.stringify(learnCache));
-            updateCountryInfo(currentLearnCategory, null, null);
-            updateLearnCounter();
-        });
-
-        // TODO comment
-        $("#learn-previous-btn").click(function () {
-            let previousIdx = learnCache[currentLearnCategory];
-            let dataLength = dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length;
-            previousIdx -= 1;
-
-            if(previousIdx < 0) {
-                previousIdx = dataLength - 1;
-            }
-
-            learnCache[currentLearnCategory] = previousIdx;
-            localStorage.setItem("learnCache", JSON.stringify(learnCache));
-
-            updateCountryInfo(currentLearnCategory, null, null);
-            updateLearnCounter();
-        });
-
-        $("#learn-next-btn").click(function () {
-            let nextIdx = learnCache[currentLearnCategory];
-            let dataLength = dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length;
-            nextIdx += 1;
-
-            if(nextIdx > dataLength - 1) {
-                nextIdx = 0;
-            }
-
-            learnCache[currentLearnCategory] = nextIdx;
-            localStorage.setItem("learnCache", JSON.stringify(learnCache));
-
-            updateCountryInfo(currentLearnCategory, null, null);
             updateLearnCounter();
         });
 
