@@ -637,7 +637,7 @@ $(document).ready(function () {
         event.preventDefault();
         const name = $("#country-name-input").val();
 
-        if(name.length === 0 ) {
+        if(name.length < 3 ) {
             return;
         }
 
@@ -897,7 +897,7 @@ $(document).ready(function () {
     }
 
     //TODO comment
-    function updateCountryInfo(category, name, index) {
+    function updateCountryInfo(category, name, index, isSearch) {
         let countryData;
 
         if(name !== null) {
@@ -908,10 +908,20 @@ $(document).ready(function () {
 
             if(countryData.length > 1) {
                 $(`#learn-${category}-tab-pane-country`).append(`
-                    <div class="alert alert-warning w-50" role="alert">
-                        Too many results. Try to search more specifically.
+                    <div class="alert alert-info w-50" role="alert">
+                        Found ${countryData.length} results.
                     </div>
                 `);
+
+                for(let country of countryData) {
+                    $(`#learn-${category}-tab-pane-country`).append(`
+                        <p class="p-0 m-0"><a style="cursor: pointer;" id=${dataPreprocessor.getProcessedDataByCategory("world").indexOf(country)} class="link-opacity-100">${country.nameCommon}</a></p>
+                    `);
+                }
+
+                $("#learn-search-tab-pane-country a").click(function () {
+                    updateCountryInfo("world", null, this.id, true);
+                });
 
                 return;
             } else if (countryData.length === 0) {
@@ -931,6 +941,10 @@ $(document).ready(function () {
         }
         else {
             countryData = dataPreprocessor.getProcessedDataByCategory(category)[learnCache[category]];
+        }
+
+        if(isSearch) {
+            category = "search";
         }
 
         $(`#learn-${category}-tab-pane-country`).empty();
@@ -1270,7 +1284,7 @@ $(document).ready(function () {
 
     /** Search a country **/
     function getCountryByName(name) {
-        return fuzzySearch(name, dataPreprocessor.getProcessedDataByCategory("world"), ["nameCommon", "nameOfficial"]);
+        return fuzzySearch(name, dataPreprocessor.getProcessedDataByCategory("world"), ["nameCommon"]);
     }
 });
 
