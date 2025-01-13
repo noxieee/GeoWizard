@@ -402,14 +402,64 @@ class QuizQuestion {
     }
 }
 
+window.addEventListener("popstate", (event) => {
+    let state = event.state;
+
+    if(state.page === "home") {
+        $("#intro").removeClass("d-none");
+        $("#menu").removeClass("d-none");
+        $("#categories").removeClass("d-none");
+        $("#quiz").addClass("d-none");
+
+        $("#quiz-summary").addClass("d-none");
+        $("#quiz-final-score").addClass("d-none");
+        $("#quiz-end-controls").addClass("d-none");
+        $("#quiz-on-podium").addClass("d-none");
+
+        $("#end-quiz-btn").removeClass("d-none");
+        $("#quiz-progress").removeClass("d-none");
+        $("#quiz-initial-clues-and-hints").removeClass("d-none");
+        $("#quiz-current-score").removeClass("d-none");
+        $("#quiz-answers").removeClass("d-none");
+        $("#menu").removeClass("d-none");
+        $("#intro").removeClass("d-none");
+        $("#categories").removeClass("d-none");
+
+        $("#quiz-next-step-btn").text("Next country");
+        $("#quiz-next-step-btn").append(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="mb-1 bi bi-chevron-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                </svg>
+            `);
+    }
+    else {
+        history.replaceState({page: "home"}, null, "?page=home");
+    }
+});
+
 $(document).ready(function () {
+    history.replaceState({page: "home"}, null, "?page=home");
+
+    /** Selectors **/
+    const introSection = $("#intro");
+    const menuSection = $("#menu");
+    const categoriesSection = $("#categories");
+    const quizSection = $("#quiz");
+    const leaderboardSection = $("#leaderboards");
+    const learnSection = $("#learn");
+
+    /** Vital variables **/
+    let currentQuizCategory = null;
+    let currentLearnCategory = null;
     let dataPreprocessor = new RestCountriesDataPreprocessor();
     let quiz = null;
     let leaderboards = null;
+    let learnCache = null;
     let newScoreIndex = null;
+    let currentMenuSelection = $('input[name="menu"]:checked').attr('id');
 
     /** Check if leaderboards are defined, if not, define the initial structure **/
-    if(!localStorage.leaderboards || !isIntegrityOfLeaderboards()) {
+    if(!localStorage.leaderboards) {
         const leaderboards = {};
 
         for(let category of Object.values(constants.CATEGORY_ID_TO_KEY)) {
@@ -423,34 +473,45 @@ $(document).ready(function () {
         localStorage.setItem("leaderboards", JSON.stringify(leaderboards));
     }
 
+    /** Check if learn cache structure is defined, if not, define the initial structure **/
+    if(!localStorage.learnCache) {
+        const learnCache = {};
+
+        for(let category of Object.values(constants.CATEGORY_ID_TO_KEY)) {
+            learnCache[category] = 0;
+        }
+
+        localStorage.setItem("learnCache", JSON.stringify(learnCache));
+    }
+
     /** Parse the leaderboards and refresh the leaderboards on frontend **/
     leaderboards = JSON.parse(localStorage.leaderboards);
     refreshLeaderboards();
 
+    /** Parse the learnCache and refresh learn section on frontend **/
+    learnCache = JSON.parse(localStorage.learnCache);
+
     /** Fetch the data and process it **/
-    $.get("rest_countries.json", function(data) {
+    $.get(constants.API_BASE_URL + constants.API_FIELDS, function(data) {
         dataPreprocessor.setInitialData(data);
         dataPreprocessor.processData();
+        createLearnSection();
     });
 
-    /** Sections on the main page selectors **/
-    const introSection = $("#intro");
-    const menuSection = $("#menu");
-    const categoriesSection = $("#categories");
-    const quizSection = $("#quiz");
-    const leaderboardSection = $("#leaderboards");
-    const learnSection = $("#learn");
-
-    /** Current selected menu item **/
-    let currentMenuSelection = $('input[name="menu"]:checked').attr('id');
-
-    /** Last selected category when clicked on Play button **/
-    let currentQuizCategory = null;
-
-    /** Event listener for the Menu radios **/
+    /** Event listener for the Menu buttons **/
     $('input[name="menu"]').on('change', function () {
         currentMenuSelection = $(this).attr('id');
         updateMainScreenContentByMenuSelection();
+    });
+
+    // TODO comment
+    $("#learn-random-btn").click(function () {
+        let max = dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length - 1;
+        let randomIdx = getRandomIntInclusive(0, max);
+        updateCountryInfo(currentLearnCategory, null, randomIdx);
+        learnCache[currentLearnCategory] = randomIdx;
+        localStorage.setItem("learnCache", JSON.stringify(learnCache));
+        updateLearnCounter();
     });
 
     /** Event listener for the hint button **/
@@ -469,6 +530,14 @@ $(document).ready(function () {
         if(quiz.isLastQuestion()) {
             updateScreenOnQuizSummary();
             $(this).text("Next country");
+            $(this).append(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="mb-1 bi bi-chevron-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                </svg>
+            `);
+
+            history.replaceState({page: "summary"}, null, "?page=summary");
+
             return;
         }
 
@@ -485,6 +554,13 @@ $(document).ready(function () {
         $("#categories").removeClass("d-none");
 
         $("#quiz-next-step-btn").text("Next country");
+        $("#quiz-next-step-btn").append(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="mb-1 bi bi-chevron-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+        `);
+
+        history.replaceState({page: "home"}, null, "?page=home");
     });
 
     /** Event listener for the back to menu button **/
@@ -506,6 +582,8 @@ $(document).ready(function () {
         $("#menu").removeClass("d-none");
         $("#intro").removeClass("d-none");
         $("#categories").removeClass("d-none");
+
+        history.replaceState({page: "home"}, null, "?page=home");
     });
 
     /** Event listener for the play again button **/
@@ -525,6 +603,8 @@ $(document).ready(function () {
         $("#end-quiz-btn").removeClass("d-none");
 
         drawQuestion();
+
+        history.replaceState({page: "quiz"}, null, "?page=quiz");
     });
 
     /** Event listeners on the play buttons on category cards **/
@@ -534,6 +614,9 @@ $(document).ready(function () {
         quiz = new Quiz(dataPreprocessor.getProcessedDataByCategory(currentQuizCategory));
         drawQuestion();
         updateMainScreenOnPlayBtnClick();
+        $("#quiz-thumbnail").attr("src", `./assets/${currentQuizCategory}.png`);
+
+        history.pushState({page: "quiz"}, null, "?page=quiz");
     });
 
     /** Event listener on the name textfield button **/
@@ -549,13 +632,59 @@ $(document).ready(function () {
         refreshLeaderboards();
     });
 
-    /** Check if the defined quiz categories are the same as the categories in localstorage **/
-    function isIntegrityOfLeaderboards() {
-        const quizCategories = Object.values(constants.CATEGORY_ID_TO_KEY);
-        const localStorageCategories = Object.keys(JSON.parse(localStorage.leaderboards));
+    // TODO comment
+    $("#country-form").submit(function () {
+        event.preventDefault();
+        const name = $("#country-name-input").val();
 
-        return arraysAreEqual(quizCategories, localStorageCategories);
-    }
+        if(name.length < 3 ) {
+            return;
+        }
+
+        $("#country-name-input").val("");
+        updateCountryInfo(null, name, null);
+    });
+
+    // TODO comment
+    $("#learn-reset-btn").click(function () {
+        learnCache[currentLearnCategory] = 0;
+        localStorage.setItem("learnCache", JSON.stringify(learnCache));
+        updateCountryInfo(currentLearnCategory, null, null);
+        updateLearnCounter();
+    });
+
+    // TODO comment
+    $("#learn-previous-btn").click(function () {
+        let previousIdx = learnCache[currentLearnCategory];
+        let dataLength = dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length;
+        previousIdx -= 1;
+
+        if(previousIdx < 0) {
+            previousIdx = dataLength - 1;
+        }
+
+        learnCache[currentLearnCategory] = previousIdx;
+        localStorage.setItem("learnCache", JSON.stringify(learnCache));
+
+        updateCountryInfo(currentLearnCategory, null, null);
+        updateLearnCounter();
+    });
+
+    $("#learn-next-btn").click(function () {
+        let nextIdx = learnCache[currentLearnCategory];
+        let dataLength = dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length;
+        nextIdx += 1;
+
+        if(nextIdx > dataLength - 1) {
+            nextIdx = 0;
+        }
+
+        learnCache[currentLearnCategory] = nextIdx;
+        localStorage.setItem("learnCache", JSON.stringify(learnCache));
+
+        updateCountryInfo(currentLearnCategory, null, null);
+        updateLearnCounter();
+    });
 
     /** Show the quiz summary **/
     function updateScreenOnQuizSummary() {
@@ -610,8 +739,7 @@ $(document).ready(function () {
             position++;
         }
 
-        console.log(index);
-        $("#leaderboard-category-tbody").children(`:nth-child(${index + 1})`).addClass("table-success");
+        $("#leaderboard-category-tbody").children(`:nth-child(${index + 1})`).addClass("table-info");
     }
 
     // TODO comment
@@ -674,6 +802,11 @@ $(document).ready(function () {
     function drawQuestion() {
         if(quiz.isLastQuestion()) {
             $("#quiz-next-step-btn").text("Finish quiz");
+            $("#quiz-next-step-btn").append(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="mb-1 bi bi-chevron-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                        </svg>
+            `);
         }
 
         $("#hintBtn").removeClass("disabled");
@@ -694,6 +827,238 @@ $(document).ready(function () {
         updateAnswers();
     }
 
+    /** Function to refresh learn section on frontend **/
+    function createLearnSection() {
+        for (let category of Object.keys(learnCache)) {
+            const categoryName = capitalizeFirstLetterOfString(category);
+
+            let tabButton = `
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" 
+                            id="learn-${category}-tab" 
+                            data-bs-toggle="tab" 
+                            data-bs-target="#learn-${category}-tab-pane" 
+                            type="button" 
+                            role="tab" 
+                            aria-controls="learn-${category}-tab-pane"
+                            value="${category}">
+                        ${categoryName}
+                    </button>
+                </li>
+            `;
+
+            $("#learnTabs").append(tabButton);
+
+            let tabContent = constructTabContent(category);
+
+            $("#learnTabContent").append(tabContent);
+
+            updateCountryInfo(category, null, null);
+        }
+
+        // TODO comment
+        $("#learnTabs li button").click(function () {
+            currentLearnCategory = $(this).val();
+
+            if(currentLearnCategory === "search") {
+                $("#learn-controls").addClass("d-none");
+            }
+            else {
+                $("#learn-controls").removeClass("d-none");
+            }
+
+            updateLearnCounter();
+        });
+
+        $("#learnTabs").children().first().find("button").addClass("active");
+        $("#learnTabContent").children().first().addClass("show active");
+        currentLearnCategory = "search";
+    }
+
+    // TODO comment
+    function updateLearnCounter() {
+        $("#learn-counter").text(`${learnCache[currentLearnCategory] + 1} / ${dataPreprocessor.getProcessedDataByCategory(currentLearnCategory).length}`);
+    }
+
+    // TODO comment
+    function constructTabContent(category) {
+        let tabContent = `
+                <div class="tab-pane fade" 
+                     id="learn-${category}-tab-pane" 
+                     role="tabpanel" 
+                     aria-labelledby="learn-${category}-tab">
+                     
+                    <div id="learn-${category}-tab-pane-country" class="container d-flex flex-column p-0 m-0 gap-4">
+                        
+                    </div>
+                </div>
+            `;
+        return tabContent;
+    }
+
+    //TODO comment
+    function updateCountryInfo(category, name, index, isSearch) {
+        let countryData;
+
+        if(name !== null) {
+            countryData = getCountryByName(name);
+            category = "search";
+
+            $(`#learn-${category}-tab-pane-country`).empty();
+
+            if(countryData.length > 1) {
+                $(`#learn-${category}-tab-pane-country`).append(`
+                    <div class="alert alert-info w-50" role="alert">
+                        Found ${countryData.length} results.
+                    </div>
+                `);
+
+                for(let country of countryData) {
+                    $(`#learn-${category}-tab-pane-country`).append(`
+                        <p class="p-0 m-0"><a style="cursor: pointer;" id=${dataPreprocessor.getProcessedDataByCategory("world").indexOf(country)} class="link-opacity-100">${country.nameCommon}</a></p>
+                    `);
+                }
+
+                $("#learn-search-tab-pane-country a").click(function () {
+                    updateCountryInfo("world", null, this.id, true);
+                });
+
+                return;
+            } else if (countryData.length === 0) {
+                $(`#learn-${category}-tab-pane-country`).append(`
+                    <div class="alert alert-danger w-50" role="alert">
+                        No results found.
+                    </div>
+                `);
+
+                return;
+            }
+            else {
+                countryData = countryData[0];
+            }
+        } else if(index !== null) {
+            countryData = dataPreprocessor.getProcessedDataByCategory(category)[index];
+        }
+        else {
+            countryData = dataPreprocessor.getProcessedDataByCategory(category)[learnCache[category]];
+        }
+
+        if(isSearch) {
+            category = "search";
+        }
+
+        $(`#learn-${category}-tab-pane-country`).empty();
+
+        $(`#learn-${category}-tab-pane-country`).append(`
+            <div class="container d-flex flex-row p-0 m-0 gap-3">
+                <div style="width: 184px">
+                    <img class="border border-dark-subtle rounded-1" src=${countryData.flag} alt="" width="184px">
+                </div>
+                <div class="container d-flex flex-column gap-3 p-0 m-0" style="min-height: 140px">
+                    <h3 class="p-0 m-0">${countryData.nameCommon}</h3>
+                    <a href="${countryData.maps}" class="d-flex gap-2 align-items-center btn btn-outline-dark align-self-start" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                        </svg>
+                        Show on google maps
+                    </a>
+                </div>
+            </div>
+
+       
+            <div class="container d-flex flex-row gap-5 p-0 m-0">
+                <div class="container p-0 m-0">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Official name</h5>
+                                <p class="m-0 col">${countryData.nameOfficial}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Capital(s)</h5>
+                                <p class="m-0 col">${countryData.capital}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Region</h5>
+                                <p class="m-0 col">${countryData.region}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Subregion</h5>
+                                <p class="m-0 col">${countryData.subregion}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Borders</h5>
+                                <p class="m-0 col">${countryData.borders}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Area</h5>
+                                <p class="m-0 col">${countryData.area}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Population</h5>
+                                <p class="m-0 col">${countryData.population}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="container p-0 m-0">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Sea access</h5>
+                                <p class="m-0 col">${countryData.hasSea}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">UN member</h5>
+                                <p class="m-0 col">${countryData.unMember}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Driving side</h5>
+                                <p class="m-0 col">${countryData.drivingSide}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Car license plate</h5>
+                                <p class="m-0 col">${countryData.carPlate}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">CCA3 identificator</h5>
+                                <p class="m-0 col">${countryData.cca3}</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="container d-flex flex-row p-0 m-0">
+                                <h5 class="m-0 col-5">Phone prefix</h5>
+                                <p class="m-0 col">${countryData.phonePrefix}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        `);
+    }
+
     /** Function to refresh leaderboards on frontend **/
     function refreshLeaderboards() {
         // Clear existing tabs and tab content
@@ -704,54 +1069,54 @@ $(document).ready(function () {
             const categoryName = capitalizeFirstLetterOfString(category);
 
             let tabButton = `
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" 
-                        id="${category}-tab" 
-                        data-bs-toggle="tab" 
-                        data-bs-target="#${category}-tab-pane" 
-                        type="button" 
-                        role="tab" 
-                        aria-controls="${category}-tab-pane">
-                    ${categoryName}
-                </button>
-            </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" 
+                            id="${category}-tab" 
+                            data-bs-toggle="tab" 
+                            data-bs-target="#${category}-tab-pane" 
+                            type="button" 
+                            role="tab" 
+                            aria-controls="${category}-tab-pane">
+                        ${categoryName}
+                    </button>
+                </li>
             `;
 
             $("#leaderboardsTabs").append(tabButton);
 
             let tabContent = `
-            <div class="tab-pane fade" 
-                 id="${category}-tab-pane" 
-                 role="tabpanel" 
-                 aria-labelledby="${category}-tab">
-                 
-                <table class="table w-50">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Score</th>
-                    </tr>
-                    </thead>
-                    <tbody class="table-group-divider">
+                <div class="tab-pane fade" 
+                     id="${category}-tab-pane" 
+                     role="tabpanel" 
+                     aria-labelledby="${category}-tab">
+                     
+                    <table class="table w-50">
+                        <thead>
                         <tr>
-                            <th class="table-warning" scope="row">1</th>
-                            <td>${leaderboards[category][0].name}</td>
-                            <td>${leaderboards[category][0].score}</td>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Score</th>
                         </tr>
-                        <tr>
-                            <th class="table-secondary" scope="row">2</th>
-                            <td>${leaderboards[category][1].name}</td>
-                            <td>${leaderboards[category][1].score}</td>
-                        </tr>
-                        <tr>
-                            <th class="table-danger" scope="row">3</th>
-                            <td>${leaderboards[category][2].name}</td>
-                            <td>${leaderboards[category][2].score}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <tr>
+                                <th class="table-warning" scope="row">1</th>
+                                <td>${leaderboards[category][0].name}</td>
+                                <td>${leaderboards[category][0].score}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-secondary" scope="row">2</th>
+                                <td>${leaderboards[category][1].name}</td>
+                                <td>${leaderboards[category][1].score}</td>
+                            </tr>
+                            <tr>
+                                <th class="table-danger" scope="row">3</th>
+                                <td>${leaderboards[category][2].name}</td>
+                                <td>${leaderboards[category][2].score}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             `;
 
             $("#leaderboardTabContent").append(tabContent);
@@ -823,11 +1188,19 @@ $(document).ready(function () {
         if(isCorrect) {
             let points = quiz.getCurrentQuestionPoints();
             $("#quiz-correct-alert").text("Correct! You earn " + points + " points.").removeClass("d-none");
-            $(this).addClass("btn-success").removeClass("btn-outline-primary").prepend("✔ ");
+            $(this).addClass("btn-success").removeClass("btn-outline-primary").prepend(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1bi bi-check-lg" viewBox="0 0 16 16">
+                        <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+                    </svg>
+                `);
         }
         else {
             $("#quiz-wrong-alert").removeClass("d-none");
-            $(this).addClass("btn-danger").removeClass("btn-outline-primary").prepend("🗙 ");
+            $(this).addClass("btn-danger").removeClass("btn-outline-primary").prepend(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                    </svg>
+                `);
             $(`#${quiz.getCurrentQuestionCorrectAnswerIdx()}`).addClass("btn-success").removeClass("btn-outline-primary");
         }
 
@@ -908,6 +1281,11 @@ $(document).ready(function () {
         currentQuizCategory = constants.CATEGORY_ID_TO_KEY[categoryBtnId];
         $("#quiz-heading-category").text(capitalizeFirstLetterOfString(currentQuizCategory));
     }
+
+    /** Search a country **/
+    function getCountryByName(name) {
+        return fuzzySearch(name, dataPreprocessor.getProcessedDataByCategory("world"), ["nameCommon"]);
+    }
 });
 
 /** Formats a number so it contains spaces between characters **/
@@ -934,8 +1312,39 @@ function capitalizeFirstLetterOfString(stringToCapitalize) {
     return stringToCapitalize.charAt(0).toUpperCase() + stringToCapitalize.slice(1);
 }
 
-/** Compare two arrays **/
-function arraysAreEqual(arr1, arr2) {
-    if (arr1.length !== arr2.length) return false;
-    return arr1.every((value, index) => value === arr2[index]);
+/** Get random integer in range **/
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/** FROM GPT - fuzzysearch **/
+function levenshteinDistance(a, b) {
+    const matrix = Array.from({ length: a.length + 1 }, (_, i) => Array(b.length + 1).fill(i));
+    for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+            matrix[i][j] = Math.min(
+                matrix[i - 1][j] + 1,        // Deletion
+                matrix[i][j - 1] + 1,        // Insertion
+                matrix[i - 1][j - 1] + cost  // Substitution
+            );
+        }
+    }
+    return matrix[a.length][b.length];
+}
+
+/** FROM GPT - fuzzysearch **/
+function fuzzySearch(query, objects, keys, threshold = 1) {
+    query = query.toLowerCase();
+    return objects.filter((obj) => {
+        return keys.some((key) => {
+            const fieldValue = obj[key].toLowerCase();
+            const distance = levenshteinDistance(query, fieldValue);
+            return distance <= threshold || fieldValue.includes(query);
+        });
+    });
 }
