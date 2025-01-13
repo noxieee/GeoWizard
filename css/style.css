@@ -1,7 +1,8 @@
-.page-bg {
-  background-image: url("../assets/page-bg.jpg");
+body {
+  background-image: url("../assets/page-pg.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
   background-attachment: fixed;
+  overflow-x: visible;
 }

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>GeoWizard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
@@ -30,7 +31,7 @@
 
     <div class="container bg-light bg-opacity-50 p-4 rounded-5 d-flex flex-column gap-4">
         <div id="intro" class="container bg-white p-4 rounded-4 d-flex flex-row gap-4 shadow-sm">
-            <img src="./assets/logo.webp" alt="GeoWizard Logo" class="rounded-3 shadow-sm" style="width: 128px; height: 128px;">
+            <img src="./assets/logo.jpg" alt="GeoWizard Logo" class="rounded-3 shadow-sm" style="width: 128px; height: 128px;">
             <div class="container p-0">
                 <h1>GeoWizard</h1>
                 <p>For all the lovers of geography.</p>
@@ -42,24 +43,50 @@
             <h3 class="m-0">Menu</h3>
             <div class="btn-group align-self-start shadow-sm" role="group" aria-label="menu-group">
                 <input type="radio" class="btn-check" name="menu" id="menu-quiz-radio" autocomplete="off" checked>
-                <label class="btn btn-outline-primary" for="menu-quiz-radio">Country quiz</label>
+                <label class="btn btn-outline-primary" for="menu-quiz-radio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe-europe-africa" viewBox="0 0 16 16">
+                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M3.668 2.501l-.288.646a.847.847 0 0 0 1.479.815l.245-.368a.81.81 0 0 1 1.034-.275.81.81 0 0 0 .724 0l.261-.13a1 1 0 0 1 .775-.05l.984.34q.118.04.243.054c.784.093.855.377.694.801-.155.41-.616.617-1.035.487l-.01-.003C8.274 4.663 7.748 4.5 6 4.5 4.8 4.5 3.5 5.62 3.5 7c0 1.96.826 2.166 1.696 2.382.46.115.935.233 1.304.618.449.467.393 1.181.339 1.877C6.755 12.96 6.674 14 8.5 14c1.75 0 3-3.5 3-4.5 0-.262.208-.468.444-.7.396-.392.87-.86.556-1.8-.097-.291-.396-.568-.641-.756-.174-.133-.207-.396-.052-.551a.33.33 0 0 1 .42-.042l1.085.724c.11.072.255.058.348-.035.15-.15.415-.083.489.117.16.43.445 1.05.849 1.357L15 8A7 7 0 1 1 3.668 2.501"/>
+                    </svg>
+                    Country quiz
+                </label>
 
                 <input type="radio" class="btn-check" name="menu" id="menu-leaderboards-radio" autocomplete="off">
-                <label class="btn btn-outline-primary" for="menu-leaderboards-radio">Leaderboards</label>
+                <label class="btn btn-outline-primary" for="menu-leaderboards-radio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trophy" viewBox="0 0 16 16">
+                        <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935M3.504 1q.01.775.056 1.469c.13 2.028.457 3.546.87 4.667C5.294 9.48 6.484 10 7 10a.5.5 0 0 1 .5.5v2.61a1 1 0 0 1-.757.97l-1.426.356a.5.5 0 0 0-.179.085L4.5 15h7l-.638-.479a.5.5 0 0 0-.18-.085l-1.425-.356a1 1 0 0 1-.757-.97V10.5A.5.5 0 0 1 9 10c.516 0 1.706-.52 2.57-2.864.413-1.12.74-2.64.87-4.667q.045-.694.056-1.469z"/>
+                    </svg>
+                    Leaderboards
+                </label>
 
                 <input type="radio" class="btn-check" name="menu" id="menu-learn-radio" autocomplete="off">
-                <label class="btn btn-outline-primary" for="menu-learn-radio">Learn about countries</label>
+                <label class="btn btn-outline-primary" for="menu-learn-radio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-book" viewBox="0 0 16 16">
+                        <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/>
+                    </svg>
+                    Learn about countries
+                </label>
             </div>
         </div>
 
         <div id="categories" class="container bg-white p-4 pt-3 rounded-4 d-flex flex-column gap-4 shadow-sm">
-            <h2>Country quiz categories</h2>
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="green" class="bi bi-globe-europe-africa" viewBox="0 0 16 16">
+                    <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M3.668 2.501l-.288.646a.847.847 0 0 0 1.479.815l.245-.368a.81.81 0 0 1 1.034-.275.81.81 0 0 0 .724 0l.261-.13a1 1 0 0 1 .775-.05l.984.34q.118.04.243.054c.784.093.855.377.694.801-.155.41-.616.617-1.035.487l-.01-.003C8.274 4.663 7.748 4.5 6 4.5 4.8 4.5 3.5 5.62 3.5 7c0 1.96.826 2.166 1.696 2.382.46.115.935.233 1.304.618.449.467.393 1.181.339 1.877C6.755 12.96 6.674 14 8.5 14c1.75 0 3-3.5 3-4.5 0-.262.208-.468.444-.7.396-.392.87-.86.556-1.8-.097-.291-.396-.568-.641-.756-.174-.133-.207-.396-.052-.551a.33.33 0 0 1 .42-.042l1.085.724c.11.072.255.058.348-.035.15-.15.415-.083.489.117.16.43.445 1.05.849 1.357L15 8A7 7 0 1 1 3.668 2.501"/>
+                </svg>
+                Country quiz categories
+            </h2>
+
             <div class="container d-flex flex-row gap-4 p-0">
                 <div class="card shadow-sm" style="width: 18rem;">
                     <img src="./assets/world.png" class="card-img-top object-fit-cover" alt="..." style="height: 150px;">
                     <div class="card-body">
                         <h4 class="card-title mb-3">World</h4>
-                        <div id="category-world" class="btn btn-primary w-100">Play</div>
+                        <div id="category-world" class="btn btn-primary w-100">
+                            Play
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-play-fill" viewBox="0 0 16 16">
+                                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
@@ -67,7 +94,12 @@
                     <img src="./assets/europe.png" class="card-img-top object-fit-cover" alt="..." style="height: 150px;">
                     <div class="card-body">
                         <h4 class="card-title mb-3">Europe</h4>
-                        <div id="category-europe" class="btn btn-primary w-100">Play</div>
+                        <div id="category-europe" class="btn btn-primary w-100">
+                            Play
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-play-fill" viewBox="0 0 16 16">
+                                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
@@ -75,7 +107,12 @@
                     <img src="./assets/asia.png" class="card-img-top object-fit-cover" alt="..." style="height: 150px;">
                     <div class="card-body">
                         <h4 class="card-title mb-3">Asia</h4>
-                        <div id="category-asia" class="btn btn-primary w-100">Play</div>
+                        <div id="category-asia" class="btn btn-primary w-100">
+                            Play
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-play-fill" viewBox="0 0 16 16">
+                                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -85,7 +122,12 @@
                     <img src="./assets/oceania.png" class="card-img-top object-fit-cover" alt="..." style="height: 150px;">
                     <div class="card-body">
                         <h4 class="card-title mb-3">Oceania</h4>
-                        <div id="category-oceania" class="btn btn-primary w-100">Play</div>
+                        <div id="category-oceania" class="btn btn-primary w-100">
+                            Play
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-play-fill" viewBox="0 0 16 16">
+                                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
@@ -93,7 +135,12 @@
                     <img src="./assets/africa.png" class="card-img-top object-fit-cover" alt="..." style="height: 150px;">
                     <div class="card-body">
                         <h4 class="card-title mb-3">Africa</h4>
-                        <div id="category-africa" class="btn btn-primary w-100">Play</div>
+                        <div id="category-africa" class="btn btn-primary w-100">
+                            Play
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-play-fill" viewBox="0 0 16 16">
+                                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
@@ -101,7 +148,12 @@
                     <img src="./assets/americas.png" class="card-img-top object-fit-cover" alt="..." style="height: 150px;">
                     <div class="card-body">
                         <h4 class="card-title mb-3">Americas</h4>
-                        <div id="category-americas" class="btn btn-primary w-100">Play</div>
+                        <div id="category-americas" class="btn btn-primary w-100">
+                            Play
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-play-fill" viewBox="0 0 16 16">
+                                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -109,7 +161,7 @@
 
         <div id="quiz" class="d-none container d-flex gap-4 flex-column p-0 m-0">
             <div class="container bg-white p-4 rounded-4 d-flex flex-row gap-4 shadow-sm">
-                <img src="./assets/world.png" alt="" class="rounded-3 shadow-sm" style="width: 256px; height: auto; object-fit: cover;">
+                <img id="quiz-thumbnail" src="./assets/world.png" alt="" class="rounded-3 shadow-sm" style="width: 256px; height: 172px; object-fit: cover;">
 
                 <div id="quiz-top" class="container d-flex flex-column gap-4 p-0">
                     <div class="container d-flex flex-row p-0 m-0 align-items-center justify-content-between">
@@ -143,7 +195,12 @@
 
                     <div id="quiz-end-controls" class="d-none container d-flex flex-row p-0 m-0 gap-3">
                         <button id="quiz-back-to-menu-btn" type="button" class="btn btn-secondary btn-lg">Back to main menu</button>
-                        <button id="quiz-play-again-btn" type="button" class="btn btn-primary btn-lg">Play again</button>
+                        <button id="quiz-play-again-btn" type="button" class="btn btn-primary btn-lg">
+                            Play again
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-play-fill" viewBox="0 0 16 16">
+                                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -151,7 +208,12 @@
             <div id="quiz-initial-clues-and-hints" class="container d-flex flex-row gap-4 p-0 m-0">
                 <div class="container bg-white p-4 pt-3 rounded-4 d-flex flex-column shadow-sm gap-3">
                     <div class="container d-flex flex-row p-0 m-0 align-items-center justify-content-between" style="height: 38px;">
-                        <h3 class="m-0">Initial clues</h3>
+                        <div class="container d-flex p-0 m-0 gap-2 align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="darkorchid" class="bi bi-crosshair2" viewBox="0 0 16 16">
+                                <path d="M8 0a.5.5 0 0 1 .5.5v.518A7 7 0 0 1 14.982 7.5h.518a.5.5 0 0 1 0 1h-.518A7 7 0 0 1 8.5 14.982v.518a.5.5 0 0 1-1 0v-.518A7 7 0 0 1 1.018 8.5H.5a.5.5 0 0 1 0-1h.518A7 7 0 0 1 7.5 1.018V.5A.5.5 0 0 1 8 0m-.5 2.02A6 6 0 0 0 2.02 7.5h1.005A5 5 0 0 1 7.5 3.025zm1 1.005A5 5 0 0 1 12.975 7.5h1.005A6 6 0 0 0 8.5 2.02zM12.975 8.5A5 5 0 0 1 8.5 12.975v1.005a6 6 0 0 0 5.48-5.48zM7.5 12.975A5 5 0 0 1 3.025 8.5H2.02a6 6 0 0 0 5.48 5.48zM10 8a2 2 0 1 0-4 0 2 2 0 0 0 4 0"/>
+                            </svg>
+                            <h3 class="m-0">Initial clues</h3>
+                        </div>
                     </div>
 
                     <ul id="initial-clues" class="list-group">
@@ -161,11 +223,19 @@
 
                 <div class="container bg-white p-4 pt-3 rounded-4 d-flex flex-column shadow-sm gap-3">
                     <div class="container d-flex flex-row p-0 m-0 align-items-center justify-content-between">
-                        <div class="container d-flex p-0 m-0 gap-2 w-50">
+                        <div class="container d-flex p-0 m-0 gap-2 w-50 align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="orange" class="bi bi-lightbulb-fill" viewBox="0 0 16 16">
+                                <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13h-5a.5.5 0 0 1-.46-.302l-.761-1.77a2 2 0 0 0-.453-.618A5.98 5.98 0 0 1 2 6m3 8.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1-.5-.5"/>
+                            </svg>
                             <h3 class="m-0 p-0">Hints</h3>
                             <h3 id="quiz-hints-count" class="m-0 p-0"></h3>
                         </div>
-                        <button id="hintBtn" type="button" class="btn btn-warning">Get a hint</button>
+                        <button id="hintBtn" type="button" class="btn btn-warning">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-lightbulb" viewBox="0 0 16 16">
+                                <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a2 2 0 0 0-.453-.618A5.98 5.98 0 0 1 2 6m6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1"/>
+                            </svg>
+                            Get a hint
+                        </button>
                     </div>
 
                     <ul id="hints" class="list-group">
@@ -175,7 +245,12 @@
             </div>
 
             <div id="quiz-answers" class="container bg-white p-4 pt-3 rounded-4 shadow-sm d-flex flex-column">
-                <h3 class="m-0">Possible answers</h3>
+                <div class="container d-flex align-items-center gap-2 p-0 m-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="dodgerblue" class="bi bi-patch-question-fill" viewBox="0 0 16 16">
+                        <path d="M5.933.87a2.89 2.89 0 0 1 4.134 0l.622.638.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01zM7.002 11a1 1 0 1 0 2 0 1 1 0 0 0-2 0m1.602-2.027c.04-.534.198-.815.846-1.26.674-.475 1.05-1.09 1.05-1.986 0-1.325-.92-2.227-2.262-2.227-1.02 0-1.792.492-2.1 1.29A1.7 1.7 0 0 0 6 5.48c0 .393.203.64.545.64.272 0 .455-.147.564-.51.158-.592.525-.915 1.074-.915.61 0 1.03.446 1.03 1.084 0 .563-.208.885-.822 1.325-.619.433-.926.914-.926 1.64v.111c0 .428.208.745.585.745.336 0 .504-.24.554-.627"/>
+                    </svg>
+                    <h3 class="m-0">Possible answers</h3>
+                </div>
 
                 <div id="answerBtns" class="mt-3 d-flex flex-row flex-wrap gap-2">
 
@@ -192,13 +267,23 @@
                         Incorrect.
                     </div>
 
-                    <button id="quiz-next-step-btn" type="button" class="disabled btn btn-primary btn-lg ms-auto" style="height: 58px;">Next country</button>
+                    <button id="quiz-next-step-btn" type="button" class="disabled btn btn-primary btn-lg ms-auto" style="height: 58px;">
+                        Next country
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="mb-1 bi bi-chevron-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
             <div id="quiz-on-podium" class="d-none container bg-white p-4 rounded-4 d-flex flex-column shadow-sm gap-4">
-                <div class="alert alert-info m-0" role="alert">
-                    <h2>Congratulations! You are on the podium!</h2>
+                <div class="alert alert-warning m-0" role="alert">
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="orange" class="bi bi-trophy-fill" viewBox="0 0 16 16">
+                            <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/>
+                        </svg>
+                        Congratulations! You are on the podium!
+                    </h2>
                 </div>
 
                 <div class="container d-flex flex-row p-0 m-0 gap-4">
@@ -225,21 +310,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="leaderboard-category-tbody" class="table-group-divider">
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>John</td>
-                                        <td>10000</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Kate</td>
-                                        <td>9980</td>
-                                    </tr>
-                                    <tr class="table-success">
-                                        <th scope="row">3</th>
-                                        <td>Player 1</td>
-                                        <td>9950</td>
-                                    </tr>
+
                                 </tbody>
                             </table>
                         </div>
@@ -272,7 +343,12 @@
         </div>
 
         <div id="leaderboards" class="d-none container d-flex flex-column gap-4 bg-white p-4 pt-3 rounded-4 shadow-sm">
-            <h2 class="m-0">Leaderboards</h2>
+            <h2 class="m-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="orange" class="bi bi-trophy-fill" viewBox="0 0 16 16">
+                    <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5m.099 2.54a2 2 0 0 0 .72 3.935c-.333-1.05-.588-2.346-.72-3.935m10.083 3.935a2 2 0 0 0 .72-3.935c-.133 1.59-.388 2.885-.72 3.935"/>
+                </svg>
+                Leaderboards
+            </h2>
 
             <ul class="nav nav-tabs" id="leaderboardsTabs" role="tablist">
 
@@ -284,9 +360,83 @@
 
         </div>
 
-        <div id="learn" class="d-none container d-flex flex-column gap-4 bg-white p-4 pt-3 rounded-4 shadow-sm">
-            <h2 class="m-0">Learn about countries</h2>
+        <div id="learn" class="d-none container d-flex flex-column gap-4 bg-white p-4 pt-3 rounded-4 shadow-sm" style="min-height: 80vh">
+            <h2 class="m-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="darkcyan" class="bi bi-book-fill" viewBox="0 0 16 16">
+                    <path d="M8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/>
+                </svg>
+                Learn about countries
+            </h2>
 
+            <ul class="nav nav-tabs" id="learnTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link"
+                            id="learn-search-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#learn-search-tab-pane"
+                            type="button"
+                            role="tab"
+                            aria-controls="learn-search-tab-pane"
+                            value="search">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
+                        Search
+                    </button>
+                </li>
+            </ul>
+
+            <div id="learn-controls" class="d-none container p-0 m-0 mb-4 d-flex gap-3 align-items-center">
+                <button id="learn-previous-btn" class="btn btn-primary" style="width: 128px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-chevron-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                    </svg>
+                    Previous
+                </button>
+
+                <h5 id="learn-counter" class="p-0 m-0" style="width: 96px; text-align: center;"></h5>
+
+                <button id="learn-next-btn" class="btn btn-primary" style="width: 128px">
+                    Next
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mb-1 bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                    </svg>
+                </button>
+
+                <div class="vr"></div>
+
+                <button id="learn-reset-btn" class="btn btn-outline-danger">Start over</button>
+
+                <div class="vr"></div>
+
+                <button id="learn-random-btn" class="btn btn-outline-secondary">Get a random country</button>
+            </div>
+
+            <div class="tab-content" id="learnTabContent">
+                <div class="tab-pane fade"
+                     id="learn-search-tab-pane"
+                     role="tabpanel"
+                     aria-labelledby="learn-search-tab">
+
+                    <label for="country-name-input" class="form-label">Enter country name</label>
+                    <form id="country-form" class="row g-3 p-0 m-0 w-50 mb-5">
+                        <div class="container p-0 m-0 d-flex flex-row gap-3">
+                            <input autocomplete="off" maxlength="72" type="text" class="form-control form-control-lg " id="country-name-input" placeholder="Canada...">
+                            <button type="submit" class="btn btn-primary btn-lg d-flex flex-row align-items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                                </svg>
+                                Search
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="learn-search-tab-pane-country" class="container d-flex flex-column p-0 m-0 gap-4">
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -294,5 +444,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="module" src="./src/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
 </body>
 </html>

@@ -589,7 +589,7 @@ $(document).ready(function () {
         $("#quiz-end-controls").removeClass("d-none");
     }
 
-    /** Updates the leaderboard shown on podium **/
+    // TODO comment
     function updateLeaderboardOnPodium(index) {
         $("#leaderboard-category").text(capitalizeFirstLetterOfString(currentQuizCategory) + " leaderboard");
         $("#leaderboard-category-tbody").empty();
@@ -610,10 +610,11 @@ $(document).ready(function () {
             position++;
         }
 
+        console.log(index);
         $("#leaderboard-category-tbody").children(`:nth-child(${index + 1})`).addClass("table-success");
     }
 
-    /** Checks if score is on podium and returns index if yes **/
+    // TODO comment
     function isHighscore(score) {
         let newScoreIndex = null;
         const categoryLeaderboard = leaderboards[currentQuizCategory];
@@ -630,7 +631,7 @@ $(document).ready(function () {
         return newScoreIndex;
     }
 
-    /** Renders the summary from quiz questions **/
+    // TODO comment
     function setSummaryItems() {
         $("#quiz-summary-tbody").empty();
 
